@@ -30,7 +30,7 @@ router.get('/room/:id', async (req, res) => {
   try {
     const _id = req.params.id;
     // console.log(_id);
-    
+
     const roomData = await RoomsCollection.findById(_id);
     res.status(200).json({
       success: true,
@@ -41,6 +41,24 @@ router.get('/room/:id', async (req, res) => {
     res.status(500).json({
       success: false,
       message: `Error getting single room data: ${err.message}`
+    })
+  }
+})
+
+// create a room data
+router.post('/room', async (req, res) => {
+  try {
+    const roomData = req.body;
+    const result = await RoomsCollection.create(roomData);
+    res.status(201).json({
+      success: true,
+      result
+    })
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      success: false,
+      message: `Error create room in DB: ${err.message}`
     })
   }
 })

@@ -68,20 +68,22 @@ const Navbar = () => {
                     </Link>
 
                     {user ? (
-                      <>
-                        <Link
-                          to='/dashboard'
-                          className='block px-4 py-3 hover:bg-neutral-100 transition font-semibold'
-                        >
-                          Dashboard
-                        </Link>
+                      <div>
+                        <div className='bg-white z-50'>
+                          <Link
+                            to='/dashboard'
+                            className='block px-4 py-3 hover:bg-neutral-100 transition font-semibold'
+                          >
+                            Dashboard
+                          </Link>
+                        </div>
                         <div
                           onClick={logOut}
                           className='px-4 py-3 hover:bg-neutral-100 transition font-semibold cursor-pointer'
                         >
                           Logout
                         </div>
-                      </>
+                      </div>
                     ) : (
                       <>
                         <Link

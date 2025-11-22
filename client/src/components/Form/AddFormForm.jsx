@@ -83,9 +83,9 @@ const AddRoomForm = ({ dates, handleDates, handleSubmit, loading, handleImageCha
                       hidden
                     />
                     <div title={imageText} className='bg-rose-500 text-white border border-gray-300 rounded font-semibold cursor-pointer p-1 px-3 hover:bg-rose-500'>
-                      {imageText.length > 20 
-                      ? imageText.split('.')[0].slice(0, 15) + '...' + '.' + imageText.split('.')[1] 
-                      : imageText }
+                      {imageText.length > 20
+                        ? imageText.split('.')[0].slice(0, 15) + '...' + '.' + imageText.split('.')[1]
+                        : imageText}
                     </div>
 
                   </label>
@@ -170,6 +170,7 @@ const AddRoomForm = ({ dates, handleDates, handleSubmit, loading, handleImageCha
         </div>
 
         <button
+          disabled={loading}
           type='submit'
           className='w-full p-3 mt-5 text-center font-medium text-white transition duration-200 rounded shadow-md bg-rose-500'
         >

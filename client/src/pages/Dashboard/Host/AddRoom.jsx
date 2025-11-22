@@ -3,17 +3,21 @@ import AddRoomForm from "../../../components/Form/AddFormForm";
 import useAuth from "../../../hooks/useAuth";
 import { imageUpload } from "../../../api/utils";
 import toast from "react-hot-toast";
-import { addDays } from "date-fns";
 import { Helmet } from "react-helmet-async";
+import {
+  useMutation
+} from '@tanstack/react-query'
+import useAxiosSecure from "../../../hooks/useAxiosSecure";
 
 const AddRoom = () => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [preview, setPreview] = useState(null);
   const [imageText, setImageText] = useState('Upload Image');
+  const axiosSecure = useAxiosSecure();
   const [dates, setDates] = useState({
     startDate: new Date(),
-    endDate: addDays(new Date(), 5),
+    endDate: new Date(),
     key: 'selection',
   })
 
@@ -34,6 +38,20 @@ const AddRoom = () => {
 
   // console.log(dates);
 
+  // handle post data using useMutation
+  const { mutateAsync } = useMutation({
+    mutationFn: async (roomData) => {
+      const { data } = await axiosSecure.post('/api/room', roomData);
+      return data;
+    },
+    onSuccess: (data) => {
+      console.log(data);
+      if (data.success) {
+        toast.success('Room added successfully!');
+      }
+    }
+  })
+
   // handle form submit
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -46,7 +64,7 @@ const AddRoom = () => {
     const from = dates.startDate;
     const to = dates.endDate;
     const price = form.price.value;
-    const guest = form.guest.value;
+    const guests = form.guest.value;
     const bathrooms = form.bathrooms.value;
     const bedrooms = form.bedrooms.value;
     const description = form.description.value;
@@ -70,7 +88,7 @@ const AddRoom = () => {
         from,
         to,
         price,
-        guest,
+        guests,
         bathrooms,
         bedrooms,
         description,
@@ -79,6 +97,9 @@ const AddRoom = () => {
       }
 
       console.table(roomData);
+
+      // post data to the server
+      await mutateAsync(roomData);
 
 
       setLoading(false);
