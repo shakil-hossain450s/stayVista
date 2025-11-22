@@ -6,6 +6,9 @@ import Login from '../pages/Login/Login'
 import SignUp from '../pages/SignUp/SignUp'
 import RoomDetails from '../pages/RoomDetails/RoomDetails'
 import DashboardLayout from '../layouts/DashboardLayout'
+import Statistics from '../pages/Dashboard/Common/Statistics'
+import AddRoom from '../pages/Dashboard/Host/AddRoom'
+import MyListings from '../pages/Dashboard/Host/MyListings'
 
 export const router = createBrowserRouter([
   {
@@ -27,7 +30,18 @@ export const router = createBrowserRouter([
     path: '/dashboard',
     element: <DashboardLayout />,
     children: [
-      
+      {
+        index: true,
+        element: <Statistics />
+      },
+      {
+        path: 'add-room',
+        element: <AddRoom />
+      },
+      {
+        path: 'my-listings',
+        element: <MyListings />
+      }
     ]
   },
   { path: '/login', element: <Login /> },
