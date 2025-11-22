@@ -1,11 +1,11 @@
 import { Link, useLocation, useNavigate } from 'react-router'
 import useAuth from '../../hooks/useAuth'
-import axios from 'axios';
 import toast from 'react-hot-toast';
 import SocialLogin from '../../components/Shared/SocialLogin/SocialLogin';
 import { useState } from 'react';
 import { FaEye, FaEyeSlash, FaHome } from 'react-icons/fa';
 import { TbFidgetSpinner } from 'react-icons/tb';
+import { imageUpload } from '../../api/utils';
 
 const SignUp = () => {
   const { createUser, updateUserProfile, loading, setLoading } = useAuth();
@@ -25,18 +25,10 @@ const SignUp = () => {
     const password = form.password.value;
     const image = form.image.files[0];
 
-    const formData = new FormData();
-    formData.append('image', image);
-
     try {
       setLoading(true);
       // 1. upload image to imgbb
-      const { data } = await axios.post(
-        `https://api.imgbb.com/1/upload?expiration=600&key=${import.meta.env.VITE_IMGBB_API_KEY}`,
-        formData
-      );
-
-      const imageUrl = data.data.display_url;
+      const imageUrl = await imageUpload(image);
 
       // 2. create user
       const result = await createUser(email, password);
