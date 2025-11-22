@@ -8,6 +8,7 @@ import {
   useMutation
 } from '@tanstack/react-query'
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
+import { useNavigate } from "react-router";
 
 const AddRoom = () => {
   const { user } = useAuth();
@@ -15,6 +16,7 @@ const AddRoom = () => {
   const [preview, setPreview] = useState(null);
   const [imageText, setImageText] = useState('Upload Image');
   const axiosSecure = useAxiosSecure();
+  const navigate = useNavigate();
   const [dates, setDates] = useState({
     startDate: new Date(),
     endDate: new Date(),
@@ -48,6 +50,7 @@ const AddRoom = () => {
       console.log(data);
       if (data.success) {
         toast.success('Room added successfully!');
+        navigate('/dashboard/my-listings');
       }
     }
   })
@@ -100,9 +103,8 @@ const AddRoom = () => {
 
       // post data to the server
       await mutateAsync(roomData);
-
-
       setLoading(false);
+
     } catch (err) {
       console.log(err);
       toast.error(err.message);

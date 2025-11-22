@@ -45,6 +45,25 @@ router.get('/room/:id', async (req, res) => {
   }
 })
 
+// get all rooms for host
+router.get('/rooms/my-listings/:email', async (req, res) => {
+  try {
+    const email = req.params.email;
+    const query = { 'host.email': email }
+    const rooms = await RoomsCollection.find(query).lean();
+    res.status(200).json({
+      success: true,
+      data: rooms
+    })
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      success: false,
+      message: `Error create room in DB: ${err.message}`
+    })
+  }
+})
+
 // create a room data
 router.post('/room', async (req, res) => {
   try {
