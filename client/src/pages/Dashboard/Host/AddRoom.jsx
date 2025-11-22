@@ -4,12 +4,13 @@ import useAuth from "../../../hooks/useAuth";
 import { imageUpload } from "../../../api/utils";
 import toast from "react-hot-toast";
 import { addDays } from "date-fns";
+import { Helmet } from "react-helmet-async";
 
 const AddRoom = () => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [preview, setPreview] = useState(null);
-  const [imageText, setImageText] = useState('');
+  const [imageText, setImageText] = useState('Upload Image');
   const [dates, setDates] = useState({
     startDate: new Date(),
     endDate: addDays(new Date(), 5),
@@ -19,7 +20,7 @@ const AddRoom = () => {
   const handleImageChange = e => {
     const file = e.target.files[0];
     console.log(file);
-    if(file){
+    if (file) {
       setPreview(URL.createObjectURL(file));
       setImageText(file.name);
     }
@@ -77,7 +78,7 @@ const AddRoom = () => {
         image: image_url
       }
 
-      console.log(roomData);
+      console.table(roomData);
 
 
       setLoading(false);
@@ -89,12 +90,15 @@ const AddRoom = () => {
   }
 
   return (
-    <section>
-      <h2>Add Room</h2>
-
-      {/* add room form */}
-      <AddRoomForm dates={dates} handleDates={handleDates} handleSubmit={handleSubmit} loading={loading} handleImageChange={handleImageChange} preview={preview} imageText={imageText} />
-    </section>
+    <>
+      <Helmet>
+        <title>Add Room | Dashboard</title>
+      </Helmet>
+      <section data-aos='fade-right'>
+        {/* add room form */}
+        <AddRoomForm dates={dates} handleDates={handleDates} handleSubmit={handleSubmit} loading={loading} handleImageChange={handleImageChange} preview={preview} imageText={imageText} />
+      </section>
+    </>
   );
 };
 

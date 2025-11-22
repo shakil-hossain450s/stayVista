@@ -1,7 +1,11 @@
+import { Helmet } from "react-helmet-async";
+
 const MyListings = () => {
   return (
-     <section>
-      <h2>My Listings</h2>
+    <section>
+      <Helmet>
+        <title>My Listings | Dashboard</title>
+      </Helmet>
 
       {/* my listing */}
     </section>
