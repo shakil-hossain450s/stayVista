@@ -2,17 +2,21 @@ import { useQuery } from '@tanstack/react-query';
 import { Helmet } from 'react-helmet-async'
 import useAxiosSecure from '../../../hooks/useAxiosSecure';
 import UserDataRow from '../../../components/TableRow/UserDataRow';
+import LoadingSpinner from '../../../components/Shared/LoadingSpinner';
 
 const ManageUsers = () => {
   const axiosSecure = useAxiosSecure();
 
-  const { data: users = [] } = useQuery({
+  const { data: users = [], isPending, isError } = useQuery({
     queryKey: ['users'],
     queryFn: async () => {
       const { data } = await axiosSecure('/api/users');
       return data.data;
     }
   })
+
+  if(isPending) return <LoadingSpinner />
+  if(isError) return <p className='text-red-500'>Something went wrong...</p>
   return (
     <>
       {
