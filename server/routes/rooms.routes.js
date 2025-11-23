@@ -15,9 +15,9 @@ router.get('/room/:id', getSingleRoom);
 router.get('/rooms/my-listings/:email', verifyToken, verifyHost, getAllRoomsForHost);
 
 // create a room data
-router.post('/room', createRoom);
+router.post('/room', verifyToken, verifyHost, createRoom);
 
 // delete a room data using id
-router.delete('/room/:id', deleteRoom);
+router.delete('/room/:id', verifyToken, verifyHost, deleteRoom);
 
 module.exports = router;

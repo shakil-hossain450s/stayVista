@@ -12,7 +12,7 @@ router.get('/users', verifyToken, verifyAdmin, getAllUsers);
 router.get('/user/:email', getSingleUser);
 
 // get user role by email
-router.get('/user/:email/role', getUserRole);;
+router.get('/user/:email/role', getUserRole);
 
 // create a user in db
 router.post('/user', createUser);
