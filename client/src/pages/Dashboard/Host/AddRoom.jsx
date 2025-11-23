@@ -1,5 +1,5 @@
 import { useState } from "react";
-import AddRoomForm from "../../../components/Form/AddFormForm";
+import AddRoomForm from "../../../components/Form/AddRoomForm";
 import useAuth from "../../../hooks/useAuth";
 import { imageUpload } from "../../../api/utils";
 import toast from "react-hot-toast";

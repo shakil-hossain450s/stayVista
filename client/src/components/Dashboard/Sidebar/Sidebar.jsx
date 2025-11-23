@@ -9,6 +9,8 @@ import useUserRole from '../../../hooks/useUserRole'
 import MenuItem from './Menu/MenuItem'
 import toast from 'react-hot-toast'
 import HostMenu from './Menu/HostMenu'
+import GuestMenu from './Menu/GuestMenu'
+import AdminMenu from './Menu/AdminMenu'
 
 const Sidebar = () => {
   const { logOut } = useAuth();
@@ -89,10 +91,12 @@ const Sidebar = () => {
                 icon={BsGraphUp}
               />
 
-              {
-                role === 'host' && <HostMenu />
-              }
-
+              {/* guest menu */}
+              {role === 'guest' && <GuestMenu />}
+              {/* host menu */}
+              {role === 'host' && <HostMenu />}
+              {/* admin menu */}
+              {role === 'admin' && <AdminMenu />}
             </nav>
           </div>
         </div>
