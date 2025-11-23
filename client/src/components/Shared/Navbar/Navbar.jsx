@@ -5,14 +5,40 @@ import { Link } from 'react-router'
 import avatarImg from '../../../assets/images/placeholder.jpg'
 import useAuth from '../../../hooks/useAuth'
 import HostRequestModal from '../../Modal/HostRequestModal'
+import { toast } from 'react-hot-toast'
+import useAxiosSecure from '../../../hooks/useAxiosSecure'
 
 const Navbar = () => {
   const { user, logOut } = useAuth()
   const [isOpen, setIsOpen] = useState(false)
+  const axiosSecure = useAxiosSecure();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const closeModal = () => {
     setIsModalOpen(false);
+  }
+
+  const handleRequestHost = async () => {
+
+    try {
+      const updatedData = {
+        email: user?.email,
+        status: 'requested'
+      }
+
+      const { data } = await axiosSecure.patch(`/api/user/status`, updatedData);
+
+
+      if (data.success) {
+        toast.success('Success! Please wait for admin approval.')
+      } else if (data.success === false) {
+        toast.success('Already requested. Please wait for admin approval.')
+      }
+
+    } catch (err) {
+      console.log(err);
+      toast.error(err.response?.data?.message || 'Something went wrong');
+    }
   }
 
   return (
@@ -48,7 +74,9 @@ const Navbar = () => {
                 {/* host request modal */}
                 <HostRequestModal
                   isOpen={isModalOpen}
-                  closeModal={closeModal} />
+                  closeModal={closeModal}
+                  handleRequestHost={handleRequestHost}
+                />
                 {/* Dropdown btn */}
                 <div
                   onClick={() => setIsOpen(!isOpen)}

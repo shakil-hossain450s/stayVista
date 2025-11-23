@@ -27,14 +27,13 @@ router.post('/user', async (req, res) => {
 
     // check if user already exists or not
     const userExists = await UsersCollection.findOne(query);
-     if (userExists) {
+    if (userExists) {
       return res.status(200).json({
         message: 'User already exists',
         inserted: false,
         user: userExists
       });
     }
-
 
     const result = await UsersCollection.create(user);
 
@@ -43,6 +42,44 @@ router.post('/user', async (req, res) => {
       data: result
     })
 
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      success: false,
+      message: err.message
+    })
+  }
+})
+
+// update the role 
+router.patch('/user/status', async (req, res) => {
+  try {
+    const { status, email } = req.body;
+
+    const query = { email }
+
+    // console.log(req.body);
+
+    const user = await UsersCollection.findOne(query);
+
+    if(user && user.status === 'requested'){
+      return res.status(200).json({
+        success: false,
+        message: 'You already requested. Please wait for admin approval.'
+      })
+    }
+
+    const updatedDoc = {
+      $set: { status: status }
+    }
+    const options = { new: true }
+
+    const result = await UsersCollection.findOneAndUpdate(query, updatedDoc, options);
+
+    res.status(200).json({
+      success: true,
+      data: result
+    })
 
   } catch (err) {
     console.log(err);
