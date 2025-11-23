@@ -4,10 +4,16 @@ import { useState } from 'react'
 import { Link } from 'react-router'
 import avatarImg from '../../../assets/images/placeholder.jpg'
 import useAuth from '../../../hooks/useAuth'
+import HostRequestModal from '../../Modal/HostRequestModal'
 
 const Navbar = () => {
   const { user, logOut } = useAuth()
   const [isOpen, setIsOpen] = useState(false)
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const closeModal = () => {
+    setIsModalOpen(false);
+  }
 
   return (
     <div className='fixed w-full bg-white z-10 shadow-sm'>
@@ -29,15 +35,20 @@ const Navbar = () => {
               <div className='flex flex-row items-center gap-3'>
                 {/* Become A Host btn */}
                 <div className='hidden md:block'>
-                  {!user && (
+                  {user && (
                     <button
                       disabled={!user}
+                      onClick={() => setIsModalOpen(!isModalOpen)}
                       className='disabled:cursor-not-allowed cursor-pointer hover:bg-neutral-100 py-3 px-4 text-sm font-semibold rounded-full  transition'
                     >
                       Host your home
                     </button>
                   )}
                 </div>
+                {/* host request modal */}
+                <HostRequestModal
+                  isOpen={isModalOpen}
+                  closeModal={closeModal} />
                 {/* Dropdown btn */}
                 <div
                   onClick={() => setIsOpen(!isOpen)}
