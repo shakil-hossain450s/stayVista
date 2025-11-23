@@ -1,15 +1,14 @@
 import { useState } from 'react'
 import { GrLogout } from 'react-icons/gr'
 import { FcSettings } from 'react-icons/fc'
-import { BsFillHouseAddFill } from 'react-icons/bs'
 import { AiOutlineBars } from 'react-icons/ai'
 import { BsGraphUp } from 'react-icons/bs'
 import useAuth from '../../../hooks/useAuth'
 import { Link, useNavigate } from 'react-router'
-import { MdHomeWork } from 'react-icons/md'
 import useUserRole from '../../../hooks/useUserRole'
 import MenuItem from './Menu/MenuItem'
 import toast from 'react-hot-toast'
+import HostMenu from './Menu/HostMenu'
 
 const Sidebar = () => {
   const { logOut } = useAuth();
@@ -19,12 +18,12 @@ const Sidebar = () => {
 
   console.log(role, loading);
 
-  const handleLogOut = async() => {
-    try{
+  const handleLogOut = async () => {
+    try {
       await logOut();
       toast.success('Logged out successfully!');
       navigate('/login');
-    } catch(err){
+    } catch (err) {
       console.log(err);
 
     }
@@ -90,19 +89,9 @@ const Sidebar = () => {
                 icon={BsGraphUp}
               />
 
-              {/* Add Room */}
-              <MenuItem
-                label='Add Room'
-                address='/dashboard/add-room'
-                icon={BsFillHouseAddFill}
-              />
-
-              {/* My Listing */}
-              <MenuItem
-                label='My Listings'
-                address='/dashboard/my-listings'
-                icon={MdHomeWork}
-              />
+              {
+                role === 'host' && <HostMenu />
+              }
 
             </nav>
           </div>
