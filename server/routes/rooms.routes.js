@@ -50,7 +50,7 @@ router.get('/rooms/my-listings/:email', async (req, res) => {
   try {
     const email = req.params.email;
     const query = { 'host.email': email }
-    const rooms = await RoomsCollection.find(query).lean();
+    const rooms = await RoomsCollection.find(query).sort({ createdAt: -1 }).lean();
     res.status(200).json({
       success: true,
       data: rooms
@@ -78,6 +78,25 @@ router.post('/room', async (req, res) => {
     res.status(500).json({
       success: false,
       message: `Error create room in DB: ${err.message}`
+    })
+  }
+})
+
+// delete a room data using id
+router.delete('/room/:id', async (req, res) => {
+  try {
+    const _id = req.params.id;
+    // console.log(_id);
+    const result = await RoomsCollection.findByIdAndDelete(_id);
+    res.status(200).json({
+      success: true,
+      result
+    })
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      success: true,
+      message: `Error Deleting room data: ${err.message}`
     })
   }
 })

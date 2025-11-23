@@ -1,15 +1,21 @@
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Helmet } from 'react-helmet-async'
 import useAxiosSecure from '../../../hooks/useAxiosSecure'
 import useAuth from '../../../hooks/useAuth'
 import RoomDataRow from '../../../components/TableRow/RoomDataRow'
 import { Link } from 'react-router'
+import LoadingSpinner from '../../../components/Shared/LoadingSpinner'
+import { toast } from 'react-hot-toast';
+import useAxiosCommon from '../../../hooks/useAxiosCommon'
 
 const MyListings = () => {
   const { user } = useAuth();
   const axiosSecure = useAxiosSecure();
+  const axiosCommon = useAxiosCommon();
+  const queryClient = useQueryClient();
 
-  const { data: rooms = [] } = useQuery({
+  // fetch rooms data
+  const { data: rooms = [], isPending, isError } = useQuery({
     queryKey: ['my-listings', user?.email],
     queryFn: async () => {
       const { data } = await axiosSecure(`/api/rooms/my-listings/${user?.email}`);
@@ -18,6 +24,30 @@ const MyListings = () => {
   })
 
   // console.log(rooms);
+
+  const { mutateAsync: deleteMyListing } = useMutation({
+    mutationFn: async (id) => {
+      const { data } = await axiosCommon.delete(`/api/room/${id}`);
+      return data;
+    },
+    onSuccess: (data) => {
+      console.log(data);
+      toast.success('Room deleted successfully!', {
+        position: 'top-right'
+      })
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries('my-listings');
+    }
+  })
+
+  const handleDelete = async (id) => {
+    await deleteMyListing(id);
+
+  }
+
+  if (isPending) return <LoadingSpinner />
+  if (isError) return <p className='text-red-500'>Something went wrong...</p>
 
   return (
     <>
@@ -81,7 +111,7 @@ const MyListings = () => {
                     {/* Room row data */}
                     {
                       rooms.map(room => (
-                        <RoomDataRow key={room._id} room={room} />
+                        <RoomDataRow key={room._id} room={room} handleDelete={handleDelete} />
                       ))
                     }
                   </tbody>

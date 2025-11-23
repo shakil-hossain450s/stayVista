@@ -6,10 +6,12 @@ import { useState } from 'react';
 import { FaEye, FaEyeSlash, FaHome } from 'react-icons/fa';
 import { TbFidgetSpinner } from 'react-icons/tb';
 import { imageUpload } from '../../api/utils';
+import useAxiosSecure from '../../hooks/useAxiosSecure';
 
 const SignUp = () => {
   const { createUser, updateUserProfile, loading, setLoading } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
+  const axiosSecure = useAxiosSecure();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -33,9 +35,22 @@ const SignUp = () => {
       // 2. create user
       const result = await createUser(email, password);
       console.log(result);
-      if (result.user) {
+      const user = result?.user;
+      if (user) {
         // 3. update user
         await updateUserProfile(name, imageUrl);
+
+        const userData = {
+          name: user?.displayName,
+          email: user?.email,
+          status: 'verified',
+          provider: 'password',
+          role: 'guest'
+        }
+        const { data } = await axiosSecure.post('/api/user', userData);
+        
+        console.log(data);
+
         toast.success('Signup successfully!');
         navigate(from);
       }
