@@ -17,6 +17,40 @@ const getAllUsers = async (req, res) => {
   }
 }
 
+// get user role by email
+const getUserRole = async (req, res) => {
+  try {
+    const email = req.params.email;
+
+    if (!email) {
+      return res.status(404).json({
+        success: false,
+        message: 'Email is required'
+      })
+    }
+
+    const user = await UsersCollection.findOne({ email }).lean();
+    if (!user) {
+      return res.status(409).json({
+        success: false,
+        message: 'No user found'
+      })
+    }
+
+    res.status(200).json({
+      success: true,
+      role: user?.role,
+      data: user
+    })
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      success: false,
+      message: err.message
+    })
+  }
+}
+
 // create a user in db
 const createUser = async (req, res) => {
   try {
@@ -55,8 +89,6 @@ const updateUserStatus = async (req, res) => {
     const { status, email } = req.body;
     const query = { email }
 
-    // console.log(req.body);
-
     // check the role is already updated or not
     const user = await UsersCollection.findOne(query);
     if (user && user.status === 'requested') {
@@ -86,4 +118,56 @@ const updateUserStatus = async (req, res) => {
   }
 }
 
-module.exports = { getAllUsers, createUser, updateUserStatus };
+// // update user name
+const updateUserName = async (req, res) => {
+  try {
+    const { email, name, image_link } = req.body;
+
+    const query = { email };
+    const updatedDoc = {
+      $set: { name }
+    }
+
+    const result = await UsersCollection.findOneAndUpdate(query, updatedDoc);
+    res.status(200).json({
+      success: true,
+      message: 'Profile updated successfully',
+      data: result
+    })
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      success: true,
+      message: err.message
+    })
+  }
+}
+
+// update user role
+const updateUserRole = async (req, res) => {
+  try {
+    const { roleData } = req.body;
+    const email = req.params.email;
+
+    const query = { email };
+    const updatedDoc = {
+      $set: { role: roleData }
+    }
+
+    const result = await UsersCollection.findOneAndUpdate(query, updatedDoc);
+    res.status(200).json({
+      success: true,
+      message: 'User role updated successfully',
+      data: result
+    });
+
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      success: false,
+      message: err.message
+    })
+  }
+}
+
+module.exports = { getAllUsers, getUserRole, createUser, updateUserStatus, updateUserName, updateUserRole };

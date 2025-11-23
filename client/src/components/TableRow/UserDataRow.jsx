@@ -1,11 +1,40 @@
 import PropTypes from 'prop-types'
 import UpdateUserRole from '../Modal/UpdateUserRole';
 import { useState } from 'react';
+import useAxiosSecure from '../../hooks/useAxiosSecure';
+import toast from 'react-hot-toast';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 const UserDataRow = ({ user }) => {
+  const axiosSecure = useAxiosSecure();
   const [isOpen, setIsOpen] = useState(false);
-  const modalHandler = (roleData) => {
-    console.log('user role updated', roleData);
-    setIsOpen(false);
+  const queryClient = useQueryClient();
+
+  const { mutateAsync } = useMutation({
+    mutationFn: async ({ roleData, email }) => {
+      const { data } = await axiosSecure.patch(`/api/user/${email}/role`, { roleData });
+      return data;
+    },
+    onSuccess: (data) => {
+      console.log(data);
+      if (data.success) {
+        toast.success(`Successfully user updated to`);
+      }
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries(['users']);
+    }
+  })
+
+  const modalHandler = async (roleData, user) => {
+
+    try {
+
+      await mutateAsync({ roleData, email: user?.email });
+      setIsOpen(false);
+
+    } catch (err) {
+      console.log(err);
+    }
   }
   return (
     <tr>
