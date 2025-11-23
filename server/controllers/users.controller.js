@@ -179,14 +179,14 @@ const updateUserName = async (req, res) => {
 // update user role by email
 const updateUserRole = async (req, res) => {
   try {
-    const { roleData, userStatus } = req.body;
+    const { roleData, status } = req.body;
     const email = req.params.email;
 
     const query = { email };
     const updatedDoc = {
       $set: { 
         role: roleData,
-        status: userStatus
+        status
        }
     }
 

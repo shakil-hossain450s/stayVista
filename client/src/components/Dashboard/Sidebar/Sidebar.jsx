@@ -12,12 +12,14 @@ import HostMenu from './Menu/HostMenu'
 import GuestMenu from './Menu/GuestMenu'
 import AdminMenu from './Menu/AdminMenu'
 import LoadingSpinner from '../../Shared/LoadingSpinner'
+import ToggleBtn from '../../Shared/Button/ToggleBtn'
 
 const Sidebar = () => {
   const { logOut } = useAuth();
   const [isActive, setActive] = useState(false);
   const { role, loading } = useUserRole();
   const navigate = useNavigate();
+  const [toggle, setToggle] = useState(true);
 
   // console.log(role, loading);
 
@@ -84,6 +86,10 @@ const Sidebar = () => {
           {/* Nav Items */}
           <div className='flex flex-col justify-between flex-1 mt-6'>
             {/* Conditional toggle button here.. */}
+            {role === 'host' && <ToggleBtn
+              toggleHandler={() => setToggle(!toggle)}
+              toggle={toggle}
+            />}
 
             {/*  Menu Items */}
             <nav>
@@ -97,7 +103,7 @@ const Sidebar = () => {
               {/* guest menu */}
               {role === 'guest' && <GuestMenu />}
               {/* host menu */}
-              {role === 'host' && <HostMenu />}
+              {role === 'host' ? toggle ? <HostMenu /> : <GuestMenu /> : undefined}
               {/* admin menu */}
               {role === 'admin' && <AdminMenu />}
             </nav>

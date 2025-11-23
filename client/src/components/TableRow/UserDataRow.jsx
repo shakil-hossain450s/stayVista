@@ -4,15 +4,17 @@ import { useState } from 'react';
 import useAxiosSecure from '../../hooks/useAxiosSecure';
 import toast from 'react-hot-toast';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import useAuth from '../../hooks/useAuth';
 
 const UserDataRow = ({ user }) => {
+  const { user: loggedInUser } = useAuth();
   const axiosSecure = useAxiosSecure();
   const [isOpen, setIsOpen] = useState(false);
   const queryClient = useQueryClient();
 
   const { mutateAsync } = useMutation({
-    mutationFn: async ({ roleData, email, userStatus }) => {
-      const { data } = await axiosSecure.patch(`/api/user/${email}/role`, { roleData, userStatus });
+    mutationFn: async ({ roleData, email, status }) => {
+      const { data } = await axiosSecure.patch(`/api/user/${email}/role`, { roleData, status });
       console.log(data);
       return data;
     },
@@ -30,11 +32,14 @@ const UserDataRow = ({ user }) => {
     }
   })
 
-  const modalHandler = async (roleData, user) => {
-
+  const modalHandler = async (roleData) => {
+    if (loggedInUser?.email === user?.email) {
+      toast.error('Action not allowed.');
+      return setIsOpen(false);
+    }
     try {
 
-      await mutateAsync({ roleData, email: user?.email, userStatus: 'verified' });
+      await mutateAsync({ roleData, email: user?.email, status: 'verified' });
       setIsOpen(false);
 
     } catch (err) {

@@ -52,7 +52,7 @@ const MyListings = () => {
   return (
     <>
       <Helmet>
-        <title>My Listings</title>
+        <title>My Listings | Dashboard</title>
       </Helmet>
 
       {

@@ -17,8 +17,7 @@ import { AiOutlineDown } from 'react-icons/ai'
 const roles = ['guest', 'host', 'admin']
 
 const UpdateUserRoleModal = ({ setIsOpen, isOpen, modalHandler, user }) => {
-  const defaultRole = user?.role.charAt(0).toUpperCase() + user?.role.slice(1)
-  const [selected, setSelected] = useState(defaultRole);
+  const [selected, setSelected] = useState(user?.role);
 
   return (
     <Transition appear show={isOpen} as={Fragment}>
@@ -85,10 +84,10 @@ const UpdateUserRoleModal = ({ setIsOpen, isOpen, modalHandler, user }) => {
                               {({ selected }) => (
                                 <>
                                   <span
-                                    className={`block truncate ${selected ? 'font-medium' : 'font-normal'
+                                    className={`cursor-pointer block truncate ${selected ? 'font-medium' : 'font-normal'
                                       }`}
                                   >
-                                    {role.charAt(0).toUpperCase() + role.slice(1)}
+                                    {role}
                                   </span>
                                   {selected ? (
                                     <span className='absolute inset-y-0 left-0 flex items-center pl-3 text-amber-600'>
@@ -113,7 +112,7 @@ const UpdateUserRoleModal = ({ setIsOpen, isOpen, modalHandler, user }) => {
                   <button
                     type='button'
                     className='inline-flex justify-center rounded-md border border-transparent bg-green-100 px-4 py-2 text-sm font-medium text-green-900 hover:bg-green-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-2'
-                    onClick={() => modalHandler(selected, user)}
+                    onClick={() => modalHandler(selected)}
                   >
                     Update
                   </button>
