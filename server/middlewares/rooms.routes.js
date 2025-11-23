@@ -1,0 +1,21 @@
+const express = require('express');
+const router = express.Router();
+const RoomsCollection = require('../models/room.model');
+const { getAllRooms, getSingleRoom, getAllRoomsForHost, createRoom, deleteRoom } = require('../controllers/rooms.controller');
+
+// get all room data 
+router.get('/rooms', getAllRooms);
+
+// get a single room data
+router.get('/room/:id', getSingleRoom);
+
+// get all rooms for host using email
+router.get('/rooms/my-listings/:email', getAllRoomsForHost);
+
+// create a room data
+router.post('/room', createRoom);
+
+// delete a room data using id
+router.delete('/room/:id', deleteRoom);
+
+module.exports = router;
