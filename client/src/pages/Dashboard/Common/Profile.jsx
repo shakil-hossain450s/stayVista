@@ -2,14 +2,57 @@ import useAuth from '../../../hooks/useAuth'
 import { Helmet } from 'react-helmet-async'
 import useUserRole from '../../../hooks/useUserRole';
 import LoadingSpinner from '../../../components/Shared/LoadingSpinner';
+import { useState } from 'react';
+import UpdateUser from '../../../components/Modal/UpdateUser';
+import toast from 'react-hot-toast';
+import { imageUpload } from '../../../api/utils';
+import useAxiosSecure from '../../../hooks/useAxiosSecure';
+import { useMutation } from '@tanstack/react-query';
 
 const Profile = () => {
-  const { user } = useAuth();
+  const { user, updateUserProfile } = useAuth();
   const { role, loading } = useUserRole();
+  const [isOpen, setIsOpen] = useState(false);
+  const axiosSecure = useAxiosSecure();
+
+  // console.log(user?.displayName);
+
+  const { mutateAsync: updateUser } = useMutation({
+    mutationFn: async (userInfo) => {
+      const { data } = await axiosSecure.patch('/api/user/updateUser', userInfo);
+      return data;
+    },
+    onSuccess: (data) => {
+      if (data.success) {
+        toast.success(data.message);
+      }
+    }
+  })
+
+  const handleUpdate = async (userInfo) => {
+    const { name, photo } = userInfo;
+    try {
+      // 1. upload img to imgbb
+      const image_link = await imageUpload(photo);
+
+      // 2. update user in firebase
+      await updateUserProfile(name, image_link);
+      
+      // 3. update the database
+      const userInfo = {
+        email: user?.email,
+        name
+      }
+      await updateUser(userInfo);
+
+    } catch (err) {
+      console.log(err);
+      toast.error(err.message);
+    }
+  }
 
   if (loading) return <LoadingSpinner />
 
-  console.log(user)
   return (
     <div className='flex justify-center items-center h-screen'>
       <Helmet>
@@ -25,7 +68,7 @@ const Profile = () => {
           <a href='#' className='relative block'>
             <img
               alt='profile'
-              src={user.photoURL}
+              src={user?.photoURL}
               className='mx-auto object-cover rounded-full h-24 w-24  border-2 border-white '
             />
           </a>
@@ -34,25 +77,34 @@ const Profile = () => {
             {role.charAt(0).toUpperCase() + role.slice(1)}
           </p>
           <p className='mt-2 text-xl font-medium text-gray-800 '>
-            User Id: {user.uid}
+            User Id: {user?.uid}
           </p>
           <div className='w-full p-2 mt-4 rounded-lg'>
             <div className='flex flex-wrap items-center justify-between text-sm text-gray-600 '>
               <p className='flex flex-col'>
                 Name
                 <span className='font-bold text-black '>
-                  {user.displayName}
+                  {user?.displayName}
                 </span>
               </p>
               <p className='flex flex-col'>
                 Email
-                <span className='font-bold text-black '>{user.email}</span>
+                <span className='font-bold text-black '>{user?.email}</span>
               </p>
 
               <div>
-                <button className='bg-[#F43F5E] px-10 py-1 rounded-lg text-white cursor-pointer hover:bg-[#af4053] block mb-1'>
+                <button onClick={() => setIsOpen(true)} className='bg-[#F43F5E] px-10 py-1 rounded-lg text-white cursor-pointer hover:bg-[#af4053] block mb-1'>
                   Update Profile
                 </button>
+                {/* update user modal */}
+                <UpdateUser
+                  isOpen={isOpen}
+                  closeModal={() => setIsOpen(false)}
+                  onSubmit={handleUpdate}
+                  defaultName={user?.displayName}
+                  defaultPhoto={user?.photoURL}
+                />
+
                 <button className='bg-[#F43F5E] px-7 py-1 rounded-lg text-white cursor-pointer hover:bg-[#af4053]'>
                   Change Password
                 </button>

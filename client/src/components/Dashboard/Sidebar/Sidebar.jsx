@@ -5,17 +5,30 @@ import { BsFillHouseAddFill } from 'react-icons/bs'
 import { AiOutlineBars } from 'react-icons/ai'
 import { BsGraphUp } from 'react-icons/bs'
 import useAuth from '../../../hooks/useAuth'
-import { Link } from 'react-router'
+import { Link, useNavigate } from 'react-router'
 import { MdHomeWork } from 'react-icons/md'
 import useUserRole from '../../../hooks/useUserRole'
 import MenuItem from './Menu/MenuItem'
+import toast from 'react-hot-toast'
 
 const Sidebar = () => {
   const { logOut } = useAuth();
   const [isActive, setActive] = useState(false);
   const { role, loading } = useUserRole();
+  const navigate = useNavigate();
 
   console.log(role, loading);
+
+  const handleLogOut = async() => {
+    try{
+      await logOut();
+      toast.success('Logged out successfully!');
+      navigate('/login');
+    } catch(err){
+      console.log(err);
+
+    }
+  }
 
 
   return (
@@ -106,7 +119,7 @@ const Sidebar = () => {
           />
 
           <button
-            onClick={logOut}
+            onClick={handleLogOut}
             className='flex w-full items-center px-4 py-2 mt-5 text-gray-600 hover:bg-gray-300   hover:text-gray-700 transition-colors duration-300 transform'
           >
             <GrLogout className='w-5 h-5' />

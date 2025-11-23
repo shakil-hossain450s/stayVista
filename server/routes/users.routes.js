@@ -46,6 +46,31 @@ router.post('/user', createUser);
 // update the status 
 router.patch('/user/status', updateUserStatus);
 
+// update user data
+router.patch('/user/updateUser', async (req, res) => {
+  try {
+    const { email, name, image_link } = req.body;
+
+    const query = { email };
+    const updatedDoc = {
+      $set: { name }
+    }
+
+    const result = await UsersCollection.findOneAndUpdate(query, updatedDoc);
+    res.status(200).json({
+      success: true,
+      message: 'Profile updated successfully',
+      data: result
+    })
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      success: true,
+      message: err.message
+    })
+  }
+})
+
 
 
 module.exports = router;
