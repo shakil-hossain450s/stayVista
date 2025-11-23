@@ -2,9 +2,11 @@ const express = require('express');
 const router = express.Router();
 const UsersCollection = require('../models/user.model');
 const { getAllUsers, createUser, updateUserStatus, updateUserRole, updateUserName, getUserRole, getSingleUser } = require('../controllers/users.controller');
+const verifyToken = require('../middlewares/verifyToken');
+const verifyAdmin = require('../middlewares/verifyAdmin');
 
 // get all user
-router.get('/users', getAllUsers);
+router.get('/users', verifyToken, verifyAdmin, getAllUsers);
 
 // get single user by email
 router.get('/user/:email', getSingleUser)
