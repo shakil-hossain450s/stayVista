@@ -1,6 +1,6 @@
 const UsersCollection = require('../models/user.model');
 
-const verifyAdmin = async (req, res, next) => {
+const verifyHost = async (req, res, next) => {
   try {
     // get the decoded user email
     const email = req.user?.email;
@@ -9,7 +9,7 @@ const verifyAdmin = async (req, res, next) => {
       return res.status(401).json({
         success: false,
         message: 'Unauthorized Access'
-      })
+      });
     }
 
     // get the user data by decoded email
@@ -22,16 +22,15 @@ const verifyAdmin = async (req, res, next) => {
       })
     }
 
-    // if user role is not admin throw forbidde access
-    if (user?.role !== 'admin') {
+    // if user role is not host throw forbidde access
+    if (user?.role !== 'host') {
       return res.status(403).json({
         success: false,
-        message: 'Forbidden access!!!'
+        message: 'Forbidden access!!'
       })
     }
 
     next();
-
   } catch (error) {
     console.log(error);
     res.status(500).json({
@@ -41,4 +40,4 @@ const verifyAdmin = async (req, res, next) => {
   }
 }
 
-module.exports = verifyAdmin;
+module.exports = verifyHost;
