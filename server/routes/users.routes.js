@@ -29,7 +29,7 @@ router.get('/user/:email/role', async (req, res) => {
     res.status(200).json({
       success: true,
       role: user?.role,
-      user
+      data: user
     })
   } catch (err) {
     console.log(err);
