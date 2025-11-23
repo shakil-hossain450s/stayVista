@@ -13,10 +13,13 @@ import {
 } from '@headlessui/react'
 import { BsCheckLg } from 'react-icons/bs'
 import { AiOutlineDown } from 'react-icons/ai'
+
 const roles = ['guest', 'host', 'admin']
 
-const UpdateUserRole = ({ setIsOpen, isOpen, modalHandler, user }) => {
-  const [selected, setSelected] = useState(user?.role)
+const UpdateUserRoleModal = ({ setIsOpen, isOpen, modalHandler, user }) => {
+  const defaultRole = user?.role.charAt(0).toUpperCase() + user?.role.slice(1)
+  const [selected, setSelected] = useState(defaultRole);
+
   return (
     <Transition appear show={isOpen} as={Fragment}>
       <Dialog
@@ -82,11 +85,10 @@ const UpdateUserRole = ({ setIsOpen, isOpen, modalHandler, user }) => {
                               {({ selected }) => (
                                 <>
                                   <span
-                                    className={`block truncate ${
-                                      selected ? 'font-medium' : 'font-normal'
-                                    }`}
+                                    className={`block truncate ${selected ? 'font-medium' : 'font-normal'
+                                      }`}
                                   >
-                                    {role}
+                                    {role.charAt(0).toUpperCase() + role.slice(1)}
                                   </span>
                                   {selected ? (
                                     <span className='absolute inset-y-0 left-0 flex items-center pl-3 text-amber-600'>
@@ -132,11 +134,11 @@ const UpdateUserRole = ({ setIsOpen, isOpen, modalHandler, user }) => {
   )
 }
 
-UpdateUserRole.propTypes = {
+UpdateUserRoleModal.propTypes = {
   user: PropTypes.object,
   modalHandler: PropTypes.func,
   setIsOpen: PropTypes.func,
   isOpen: PropTypes.bool,
 }
 
-export default UpdateUserRole
+export default UpdateUserRoleModal

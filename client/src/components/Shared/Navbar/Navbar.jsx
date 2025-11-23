@@ -7,16 +7,44 @@ import useAuth from '../../../hooks/useAuth'
 import HostRequestModal from '../../Modal/HostRequestModal'
 import { toast } from 'react-hot-toast'
 import useAxiosSecure from '../../../hooks/useAxiosSecure'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 const Navbar = () => {
   const { user, logOut } = useAuth()
   const [isOpen, setIsOpen] = useState(false)
   const axiosSecure = useAxiosSecure();
+  const queryClient = useQueryClient();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const closeModal = () => {
     setIsModalOpen(false);
   }
+
+  const { data: userInfo = {} } = useQuery({
+    queryKey: ['user', user?.email],
+    enabled: !!user?.email,
+    queryFn: async () => {
+      const { data } = await axiosSecure(`/api/user/${user?.email}`)
+      return data.data;
+    }
+  })
+
+  const { mutateAsync } = useMutation({
+    mutationFn: async (updatedData) => {
+      const { data } = await axiosSecure.patch(`/api/user/status`, updatedData);
+      return data;
+    },
+    onSuccess: (data) => {
+      if (data.success) {
+        toast.success('Success! Please wait for admin approval.')
+      } else if (data.success === false) {
+        toast.success(data.message)
+      }
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries(['users']);
+    }
+  })
 
   const handleRequestHost = async () => {
 
@@ -25,15 +53,7 @@ const Navbar = () => {
         email: user?.email,
         status: 'requested'
       }
-
-      const { data } = await axiosSecure.patch(`/api/user/status`, updatedData);
-
-
-      if (data.success) {
-        toast.success('Success! Please wait for admin approval.')
-      } else if (data.success === false) {
-        toast.success(data.message)
-      }
+      await mutateAsync(updatedData)
 
     } catch (err) {
       console.log(err);
@@ -65,7 +85,7 @@ const Navbar = () => {
                 <div className='hidden md:block'>
                   {user && (
                     <button
-                      disabled={!user}
+                      disabled={!user || userInfo?.role === 'host' || userInfo?.role === 'admin'}
                       onClick={() => setIsModalOpen(!isModalOpen)}
                       className='disabled:cursor-not-allowed cursor-pointer hover:bg-neutral-100 py-3 px-4 text-sm font-semibold rounded-full  transition'
                     >

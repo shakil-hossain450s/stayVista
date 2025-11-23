@@ -2,8 +2,8 @@ import useAuth from '../../../hooks/useAuth'
 import { Helmet } from 'react-helmet-async'
 import useUserRole from '../../../hooks/useUserRole';
 import LoadingSpinner from '../../../components/Shared/LoadingSpinner';
+import UpdateUserModal from '../../../components/Modal/UpdateUserModal';
 import { useState } from 'react';
-import UpdateUser from '../../../components/Modal/UpdateUser';
 import toast from 'react-hot-toast';
 import { imageUpload } from '../../../api/utils';
 import useAxiosSecure from '../../../hooks/useAxiosSecure';
@@ -97,7 +97,7 @@ const Profile = () => {
                   Update Profile
                 </button>
                 {/* update user modal */}
-                <UpdateUser
+                <UpdateUserModal
                   isOpen={isOpen}
                   closeModal={() => setIsOpen(false)}
                   onSubmit={handleUpdate}

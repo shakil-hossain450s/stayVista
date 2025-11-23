@@ -11,6 +11,7 @@ import toast from 'react-hot-toast'
 import HostMenu from './Menu/HostMenu'
 import GuestMenu from './Menu/GuestMenu'
 import AdminMenu from './Menu/AdminMenu'
+import LoadingSpinner from '../../Shared/LoadingSpinner'
 
 const Sidebar = () => {
   const { logOut } = useAuth();
@@ -18,7 +19,7 @@ const Sidebar = () => {
   const { role, loading } = useUserRole();
   const navigate = useNavigate();
 
-  console.log(role, loading);
+  // console.log(role, loading);
 
   const handleLogOut = async () => {
     try {
@@ -30,6 +31,8 @@ const Sidebar = () => {
 
     }
   }
+
+  if (loading) return <LoadingSpinner />
 
 
   return (

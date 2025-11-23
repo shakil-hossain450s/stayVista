@@ -2,7 +2,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { Fragment, useState } from "react";
 import PropTypes from 'prop-types';
 
-const UpdateUser = ({ isOpen, closeModal, onSubmit, defaultName = "", defaultPhoto = "" }) => {
+const UpdateUserModal = ({ isOpen, closeModal, onSubmit, defaultName = "", defaultPhoto = "" }) => {
   const [name, setName] = useState(defaultName);
   const [photo, setPhoto] = useState(defaultPhoto);
 
@@ -96,7 +96,7 @@ const UpdateUser = ({ isOpen, closeModal, onSubmit, defaultName = "", defaultPho
   );
 };
 
-UpdateUser.propTypes = {
+UpdateUserModal.propTypes = {
   isOpen: PropTypes.bool,
   closeModal: PropTypes.func,
   onSubmit: PropTypes.func,
@@ -104,4 +104,4 @@ UpdateUser.propTypes = {
   defaultPhoto: PropTypes.string
 }
 
-export default UpdateUser;
+export default UpdateUserModal;

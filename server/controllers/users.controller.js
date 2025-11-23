@@ -17,6 +17,39 @@ const getAllUsers = async (req, res) => {
   }
 }
 
+// get a single user
+const getSingleUser = async (req, res) => {
+  try {
+    const email = req.params.email;
+
+    if (!email) {
+      return res.status(404).json({
+        success: false,
+        message: 'Email is required'
+      })
+    }
+
+    const user = await UsersCollection.findOne({ email }).lean();
+    if (!user) {
+      return res.status(409).json({
+        success: false,
+        message: 'No user found'
+      })
+    }
+
+    res.status(200).json({
+      success: true,
+      data: user
+    })
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      success: false,
+      message: err.message
+    })
+  }
+}
+
 // get user role by email
 const getUserRole = async (req, res) => {
   try {
@@ -143,22 +176,25 @@ const updateUserName = async (req, res) => {
   }
 }
 
-// update user role
+// update user role by email
 const updateUserRole = async (req, res) => {
   try {
-    const { roleData } = req.body;
+    const { roleData, userStatus } = req.body;
     const email = req.params.email;
 
     const query = { email };
     const updatedDoc = {
-      $set: { role: roleData }
+      $set: { 
+        role: roleData,
+        status: userStatus
+       }
     }
 
-    const result = await UsersCollection.findOneAndUpdate(query, updatedDoc);
+    await UsersCollection.findOneAndUpdate(query, updatedDoc);
     res.status(200).json({
       success: true,
       message: 'User role updated successfully',
-      data: result
+      role: roleData
     });
 
   } catch (err) {
@@ -170,4 +206,4 @@ const updateUserRole = async (req, res) => {
   }
 }
 
-module.exports = { getAllUsers, getUserRole, createUser, updateUserStatus, updateUserName, updateUserRole };
+module.exports = { getAllUsers, getSingleUser, getUserRole, createUser, updateUserStatus, updateUserName, updateUserRole };
