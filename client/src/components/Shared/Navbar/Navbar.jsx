@@ -32,12 +32,14 @@ const Navbar = () => {
       if (data.success) {
         toast.success('Success! Please wait for admin approval.')
       } else if (data.success === false) {
-        toast.success('Already requested. Please wait for admin approval.')
+        toast.success(data.message)
       }
 
     } catch (err) {
       console.log(err);
       toast.error(err.response?.data?.message || 'Something went wrong');
+    } finally {
+      closeModal();
     }
   }
 

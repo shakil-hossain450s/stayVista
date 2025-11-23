@@ -10,7 +10,7 @@ const Rooms = () => {
   const axiosCommon = useAxiosCommon();
   const [params] = useSearchParams();
   const categoryValue = params.get('category');
-  console.log(categoryValue);
+  // console.log(categoryValue);
 
   const { data: rooms = [], isPending, isError } = useQuery({
     queryKey: ['rooms', categoryValue],
