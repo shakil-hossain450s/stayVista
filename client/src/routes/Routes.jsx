@@ -14,6 +14,7 @@ import ManageUsers from '../pages/Dashboard/Admin/ManageUsers'
 import PrivateRoute from './PrivateRoute'
 import AdminRoute from './AdminRoute'
 import HostRoute from './HostRoute'
+import MyBookings from '../pages/Dashboard/Guest/MyBookings'
 
 export const router = createBrowserRouter([
   {
@@ -37,12 +38,27 @@ export const router = createBrowserRouter([
       <DashboardLayout />
     </PrivateRoute>,
     children: [
+      // default for all user role
       {
         index: true,
         element: <PrivateRoute>
           <Statistics />
         </PrivateRoute>
       },
+      {
+        path: 'profile',
+        element: <PrivateRoute>
+          <Profile />
+        </PrivateRoute>
+      },
+      // routes for guest
+      {
+        path: 'my-bookings',
+        element: <PrivateRoute>
+          <MyBookings />
+        </PrivateRoute>
+      },
+      // routes for host
       {
         path: 'add-room',
         element: <PrivateRoute>
@@ -59,12 +75,7 @@ export const router = createBrowserRouter([
           </HostRoute>
         </PrivateRoute>
       },
-      {
-        path: 'profile',
-        element: <PrivateRoute>
-          <Profile />
-        </PrivateRoute>
-      },
+      // // routes for admin
       {
         path: 'manage-users',
         element: <PrivateRoute>
