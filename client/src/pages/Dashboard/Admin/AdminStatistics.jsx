@@ -2,9 +2,26 @@ import { Calendar } from 'react-date-range'
 import { FaUserAlt, FaDollarSign } from 'react-icons/fa'
 import { BsFillCartPlusFill, BsFillHouseDoorFill } from 'react-icons/bs'
 import SalesLineChart from '../../../components/Dashboard/SalesLineChart'
+import { useQuery } from '@tanstack/react-query'
+import useAxiosSecure from '../../../hooks/useAxiosSecure'
+import LoadingSpinner from '../../../components/Shared/LoadingSpinner'
 
 const AdminStatistics = () => {
   // Fetch Admin Stat Data here
+  const axiosSecure = useAxiosSecure();
+  const { data: stateData = [], isPending, isError } = useQuery({
+    queryKey: ['admin-statistics'],
+    queryFn: async () => {
+      const { data } = await axiosSecure('/api/statistics/admin-stat');
+      return data;
+    }
+  });
+
+  const { totalUsers, totalRooms, totalBookings, totalPrice, chartData } = stateData;
+
+  if (isPending) return <LoadingSpinner />
+  if (isError) return <p className='text-red-500'>Something went wrong...</p>
+
   return (
     <div>
       <div className='mt-12'>
@@ -22,7 +39,7 @@ const AdminStatistics = () => {
                 Total Sales
               </p>
               <h4 className='block antialiased tracking-normal font-sans text-2xl font-semibold leading-snug text-blue-gray-900'>
-                $345
+                ${totalPrice}
               </h4>
             </div>
           </div>
@@ -38,7 +55,7 @@ const AdminStatistics = () => {
                 Total User
               </p>
               <h4 className='block antialiased tracking-normal font-sans text-2xl font-semibold leading-snug text-blue-gray-900'>
-                23
+                {totalUsers}
               </h4>
             </div>
           </div>
@@ -54,7 +71,7 @@ const AdminStatistics = () => {
                 Total Bookings
               </p>
               <h4 className='block antialiased tracking-normal font-sans text-2xl font-semibold leading-snug text-blue-gray-900'>
-                345
+                {totalBookings}
               </h4>
             </div>
           </div>
@@ -70,7 +87,7 @@ const AdminStatistics = () => {
                 Total Rooms
               </p>
               <h4 className='block antialiased tracking-normal font-sans text-2xl font-semibold leading-snug text-blue-gray-900'>
-                454
+                {totalRooms}
               </h4>
             </div>
           </div>
@@ -80,7 +97,7 @@ const AdminStatistics = () => {
           {/* Total Sales Graph */}
           <div className='relative flex flex-col bg-clip-border rounded-xl bg-white text-gray-700 shadow-md overflow-hidden xl:col-span-2'>
             {/* Render Chart Here */}
-            <SalesLineChart />
+            <SalesLineChart chartData={chartData} />
           </div>
           {/* Calender */}
           <div className='relative flex flex-col bg-clip-border rounded-xl bg-white text-gray-700 shadow-md overflow-hidden'>
