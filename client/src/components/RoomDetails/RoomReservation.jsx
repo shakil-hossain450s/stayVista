@@ -59,13 +59,25 @@ const RoomReservation = ({ room }) => {
       <div className='p-4'>
         <Button
           onClick={() => setIsOpen(true)}
-          disabled={room.booked}
+          disabled={room.booked || room.host.email === user?.email}
           label={`${room.booked ? 'Already Booked' : 'Reserve'}`}
         />
       </div>
 
       {/* booking modal */}
-      <BookingModal isOpen={isOpen} closeModal={closeModal} bookingInfo={{ ...room, price: totalPrice, guest: { name: user?.displayName } }} />
+      <BookingModal
+        isOpen={isOpen}
+        closeModal={closeModal}
+        bookingInfo={{
+          ...room,
+          price: totalPrice,
+          guest: {
+            name: user?.displayName,
+            email: user?.email,
+            image: user?.photoURL
+          }
+        }}
+      />
 
       <hr />
       <div className='p-4 flex items-center justify-between font-semibold text-lg'>

@@ -40,6 +40,6 @@ app.use('/api', usersRoutes);
 // payment routes
 app.use('/api/payments', paymentsRoutes);
 // bookings routes
-app.use('/api/bookings/book', bookingsRoutes);
+app.use('/api/bookings', bookingsRoutes);
 
 module.exports = app;

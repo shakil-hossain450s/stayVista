@@ -6,6 +6,7 @@ import useAxiosSecure from '../../hooks/useAxiosSecure';
 import useAuth from '../../hooks/useAuth';
 import { toast } from 'react-hot-toast';
 import { ImSpinner9 } from "react-icons/im";
+import { useNavigate } from 'react-router';
 
 const CheckoutForm = ({ closeModal, bookingInfo }) => {
   const { price } = bookingInfo;
@@ -13,6 +14,7 @@ const CheckoutForm = ({ closeModal, bookingInfo }) => {
   const stripe = useStripe();
   const elements = useElements();
   const axiosSecure = useAxiosSecure();
+  const navigate = useNavigate();
 
   const [errorMessage, setErrorMessage] = useState('');
   const [loading, setLoading] = useState(false);
@@ -86,10 +88,12 @@ const CheckoutForm = ({ closeModal, bookingInfo }) => {
           console.log(paymentInfo);
 
           // 2. save payment info in bookings collection in db
+          // 3. change room status to booking db 
           const { data } = await axiosSecure.post('/api/bookings/book', paymentInfo);
           console.log(data);
 
-          // 3. change room status to bookedin db 
+          // 4. navigate to the my bookings page
+          navigate('/dashboard/my-bookings');
 
           toast.success('Payment Successfull!');
           setErrorMessage('');
