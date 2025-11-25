@@ -3,14 +3,107 @@ import { format } from 'date-fns'
 import { useState } from 'react'
 import DeleteModal from '../Modal/DeleteModal';
 import UpdateRoomModal from '../Modal/UpdateRoomModal';
+import { imageUpload } from '../../api/utils';
+import useAxiosSecure from '../../hooks/useAxiosSecure';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import toast from 'react-hot-toast';
 
 const RoomDataRow = ({ room, handleDelete }) => {
+  const axiosSecure = useAxiosSecure();
   const [isOpen, setIsOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [preview, setPreview] = useState(null);
+  const [imageText, setImageText] = useState('Upload Image');
+  const [imageUrl, setImageUrl] = useState('');
+
+  const queryClient = useQueryClient();
 
   const closeModal = () => {
     setIsOpen(false);
   }
+
+  const [dates, setDates] = useState({
+    startDate: new Date(room?.from),
+    endDate: new Date(room?.to),
+    key: 'selection',
+  });
+  // handle get dates from date range
+  const handleDates = item => {
+    // console.log(item);
+    setDates(item.selection)
+  }
+
+  const handleImageChange = async (e) => {
+    const file = e.target.files[0];
+    console.log(file);
+    if (file) {
+      setPreview(URL.createObjectURL(file));
+      setImageText(file.name);
+      const image_url = await imageUpload(file);
+      setImageUrl(image_url);
+    }
+  }
+
+  const { mutateAsync: updateRoom } = useMutation({
+    mutationFn: async (updatedRoomData) => {
+      const { data } = await axiosSecure.put(`/api/rooms/room/${room?._id}`, updatedRoomData);
+      return data;
+    },
+    onError: (err) => {
+      console.log(err);
+      toast.error(err.message);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries(['my-listings']);
+    },
+    onSuccess: (data) => {
+      toast.success(data.message);
+      console.log(data);
+      setLoading(false);
+      setIsEditModalOpen(false);
+    },
+  })
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const form = e.target;
+    console.log(imageUrl);
+
+    try {
+      setLoading(true);
+      const updatedRoomData = {
+        location: form.location.value,
+        category: form.category.value,
+        title: form.title.value,
+        from: dates.startDate,
+        to: dates.endDate,
+        price: form.price.value,
+        guests: form.guest.value,
+        bathrooms: form.bathrooms.value,
+        bedrooms: form.bedrooms.value,
+        description: form.description.value,
+        image: imageUrl || room?.image,
+        host: {
+          name: room?.host?.name,
+          image: room?.host?.image,
+          email: room?.host?.email
+        }
+      }
+
+      console.table(updatedRoomData);
+
+      await updateRoom(updatedRoomData);
+
+
+      setLoading(false);
+    } catch (err) {
+      console.log(err);
+      setLoading(false);
+    }
+  }
+
   return (
     <tr>
       <td className='px-5 py-5 border-b border-gray-200 bg-white text-sm'>
@@ -65,7 +158,18 @@ const RoomDataRow = ({ room, handleDelete }) => {
           <span className='relative'>Update</span>
         </button>
         {/* Update Modal */}
-        <UpdateRoomModal isOpen={isEditModalOpen} setIsEditModalOpen={setIsEditModalOpen} />
+        <UpdateRoomModal
+          isOpen={isEditModalOpen}
+          setIsEditModalOpen={setIsEditModalOpen}
+          handleSubmit={handleSubmit}
+          room={room}
+          dates={dates}
+          handleDates={handleDates}
+          loading={loading}
+          handleImageChange={handleImageChange}
+          preview={preview}
+          imageText={imageText}
+        />
       </td>
     </tr>
   )

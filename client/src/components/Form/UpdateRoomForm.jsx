@@ -1,9 +1,14 @@
+import PropTypes from 'prop-types';
+import { DateRange } from 'react-date-range';
 import { categories } from '../Categories/CategoriesData';
+import { ImSpinner9 } from "react-icons/im";
 
-const UpdateRoomForm = () => {
+const UpdateRoomForm = ({ handleSubmit, room, dates, handleDates, loading, handleImageChange, preview, imageText }) => {
+  const { location, title, price, category: defaultCategory, guests, image, bathrooms, bedrooms, description } = room;
+
   return (
     <div className='w-full min-h-[calc(100vh-40px)] flex flex-col justify-center items-center text-gray-800 rounded-xl bg-gray-50'>
-      <form>
+      <form onSubmit={handleSubmit}>
         <div className='grid grid-cols-1 gap-10'>
           <div className='space-y-1 text-sm'>
             <label htmlFor='location' className='block text-gray-600'>
@@ -15,6 +20,7 @@ const UpdateRoomForm = () => {
               id='location'
               type='text'
               placeholder='Location'
+              defaultValue={location}
               required
             />
           </div>
@@ -28,6 +34,7 @@ const UpdateRoomForm = () => {
               id='title'
               type='text'
               placeholder='Title'
+              defaultValue={title}
               required
             />
           </div>
@@ -38,6 +45,7 @@ const UpdateRoomForm = () => {
             </label>
             <select
               required
+              defaultValue={defaultCategory}
               className='w-full px-4 py-3 border-rose-300 focus:outline-rose-500 rounded-md'
               name='category'
             >
@@ -53,11 +61,20 @@ const UpdateRoomForm = () => {
             <label htmlFor='location' className='block text-gray-600'>
               Select Availability Range
             </label>
-            <div className='flex justify-center pt-2'>{/* Calender */}</div>
+            <div className='flex justify-center pt-2'>
+              {/* Calender */}
+              <DateRange
+                rangeColors={['#F43F5E']}
+                editableDateInputs={true}
+                onChange={item => handleDates(item)}
+                moveRangeOnFirstSelection={false}
+                ranges={[dates]}
+              />
+            </div>
           </div>
 
-          <div className=' p-4 bg-white w-full  m-auto rounded-lg'>
-            <div className='file_upload px-5 py-3 relative border-4 border-dotted border-gray-300 rounded-lg'>
+          <div className='grid grid-cols-12 gap-2 p-4 bg-white w-full m-auto rounded-lg'>
+            <div className='col-span-9 file_upload px-5 py-3 relative border-4 border-dotted border-gray-300 rounded-lg'>
               <div className='flex flex-col w-max mx-auto text-center'>
                 <label>
                   <input
@@ -66,15 +83,34 @@ const UpdateRoomForm = () => {
                     name='image'
                     id='image'
                     accept='image/*'
+                    onChange={handleImageChange}
                     hidden
                   />
-                  <div className='bg-rose-500 text-white border border-gray-300 rounded font-semibold cursor-pointer p-1 px-3 hover:bg-rose-500'>
-                    Upload Image
+                  <div title={imageText} className='bg-rose-500 text-white border border-gray-300 rounded font-semibold cursor-pointer p-1 px-3 hover:bg-rose-500'>
+                    {
+                      !image ? (
+                        imageText.length > 20
+                        ? imageText.split('.')[0].slice(0, 15) + '...' + '.' + imageText.split('.')[1]
+                        : imageText
+                      ) : (
+                        image.length > 20
+                        ? image.split('.')[0].slice(0, 15) + '...' + '.' + image.split('.')[1]
+                        : image
+                      )
+                    }
                   </div>
                 </label>
               </div>
             </div>
+            <div className='col-span-3 flex items-center justify-end'>
+              {preview ? (
+                <img className='h-14 w-full object-cover' src={preview} />
+              ) : (
+                <img className='h-14 w-full object-cover' src={image} />
+              )}
+            </div>
           </div>
+
           <div className='flex justify-between gap-2'>
             <div className='space-y-1 text-sm'>
               <label htmlFor='price' className='block text-gray-600'>
@@ -86,6 +122,7 @@ const UpdateRoomForm = () => {
                 id='price'
                 type='number'
                 placeholder='Price'
+                defaultValue={price}
                 required
               />
             </div>
@@ -100,6 +137,7 @@ const UpdateRoomForm = () => {
                 id='guest'
                 type='number'
                 placeholder='Total guest'
+                defaultValue={guests}
                 required
               />
             </div>
@@ -116,6 +154,7 @@ const UpdateRoomForm = () => {
                 id='bedrooms'
                 type='number'
                 placeholder='Bedrooms'
+                defaultValue={bedrooms}
                 required
               />
             </div>
@@ -130,6 +169,7 @@ const UpdateRoomForm = () => {
                 id='bathrooms'
                 type='number'
                 placeholder='Bathrooms'
+                defaultValue={bathrooms}
                 required
               />
             </div>
@@ -144,19 +184,32 @@ const UpdateRoomForm = () => {
               id='description'
               className='block rounded-md focus:rose-300 w-full h-32 px-4 py-3 text-gray-800  border border-rose-300 focus:outline-rose-500 '
               name='description'
+              defaultValue={description}
             ></textarea>
           </div>
         </div>
 
         <button
           type='submit'
+          disabled={loading}
           className='w-full p-3 mt-5 text-center font-medium text-white transition duration-200 rounded shadow-md bg-rose-500'
         >
-          Update
+          {loading ? <ImSpinner9 className='animate-spin m-auto' width={24} /> : 'Update'}
         </button>
       </form>
     </div>
   )
+}
+
+UpdateRoomForm.propTypes = {
+  handleSubmit: PropTypes.func,
+  room: PropTypes.object,
+  dates: PropTypes.object,
+  handleDates: PropTypes.func,
+  loading: PropTypes.bool,
+  handleImageChange: PropTypes.func,
+  preview: PropTypes.string,
+  imageText: PropTypes.string
 }
 
 export default UpdateRoomForm;

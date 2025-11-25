@@ -17,6 +17,29 @@ router.get('/rooms/my-listings/:email', verifyToken, verifyHost, getAllRoomsForH
 // create a room data
 router.post('/room', verifyToken, verifyHost, createRoom);
 
+// update the room data
+router.put('/rooms/room/:id', async (req, res) => {
+  try {
+    const _id = req.params.id;
+
+    const updatedRoomData = req.body;
+    
+    const result = await RoomsCollection.findByIdAndUpdate(_id, updatedRoomData);
+    res.status(200).json({
+      success: true,
+      message: 'Successfully updated the room data',
+      data: result
+    })
+
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      success: false,
+      message: err.message
+    })
+  }
+})
+
 // update the room book status
 router.patch('/room/status/:id', updateRoomStatus);
 

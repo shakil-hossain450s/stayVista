@@ -9,7 +9,8 @@ import {
 import { Fragment } from 'react'
 import UpdateRoomForm from '../Form/UpdateRoomForm'
 
-const UpdateRoomModal = ({ setIsEditModalOpen, isOpen }) => {
+const UpdateRoomModal = ({ setIsEditModalOpen, isOpen, handleSubmit, room, dates, handleDates, loading, handleImageChange, preview, imageText }) => {
+
   return (
     <Transition appear show={isOpen} as={Fragment}>
       <Dialog
@@ -49,7 +50,16 @@ const UpdateRoomModal = ({ setIsEditModalOpen, isOpen }) => {
                 </DialogTitle>
                 <div className='mt-2 w-full'>
                   {/* Update room form */}
-                  <UpdateRoomForm />
+                  <UpdateRoomForm
+                    handleSubmit={handleSubmit}
+                    room={room}
+                    dates={dates}
+                    handleDates={handleDates}
+                    loading={loading}
+                    handleImageChange={handleImageChange}
+                    preview={preview}
+                    imageText={imageText}
+                  />
                 </div>
                 <hr className='mt-8 ' />
                 <div className='mt-2 '>
@@ -73,6 +83,14 @@ const UpdateRoomModal = ({ setIsEditModalOpen, isOpen }) => {
 UpdateRoomModal.propTypes = {
   setIsEditModalOpen: PropTypes.func,
   isOpen: PropTypes.bool,
+  handleSubmit: PropTypes.func,
+  room: PropTypes.object,
+  dates: PropTypes.object,
+  handleDates: PropTypes.func,
+  loading: PropTypes.bool,
+  handleImageChange: PropTypes.func,
+  preview: PropTypes.string,
+  imageText: PropTypes.string
 }
 
 export default UpdateRoomModal;

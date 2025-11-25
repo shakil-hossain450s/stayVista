@@ -21,7 +21,15 @@ const AddRoom = () => {
     startDate: new Date(),
     endDate: new Date(),
     key: 'selection',
-  })
+  });
+
+  // handle get dates from date range
+  const handleDates = item => {
+    // console.log(item);
+    setDates(item.selection)
+  }
+  // console.log(dates);
+
 
   const handleImageChange = e => {
     const file = e.target.files[0];
@@ -31,15 +39,7 @@ const AddRoom = () => {
       setImageText(file.name);
     }
   }
-
-  // handle get dates from date range
-  const handleDates = item => {
-    // console.log(item);
-    setDates(item.selection)
-  }
-
-  // console.log(dates);
-
+  
   // handle post data using useMutation
   const { mutateAsync } = useMutation({
     mutationFn: async (roomData) => {
