@@ -5,15 +5,16 @@ import './CheckoutForm.css';
 import useAxiosSecure from '../../hooks/useAxiosSecure';
 import useAuth from '../../hooks/useAuth';
 import { toast } from 'react-hot-toast';
+import { ImSpinner9 } from "react-icons/im";
 
 const CheckoutForm = ({ closeModal, bookingInfo }) => {
-  const { user } = useAuth();
   const { price } = bookingInfo;
+  const { user } = useAuth();
   const stripe = useStripe();
   const elements = useElements();
   const axiosSecure = useAxiosSecure();
 
-  const [error, setError] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
   const [loading, setLoading] = useState(false);
 
   const amountInCents = price * 100;
@@ -29,7 +30,7 @@ const CheckoutForm = ({ closeModal, bookingInfo }) => {
     }
 
     setLoading(true);
-    setError('');
+    setErrorMessage('');
 
     const card = elements.getElement(CardElement);
     if (card == null) {
@@ -44,24 +45,23 @@ const CheckoutForm = ({ closeModal, bookingInfo }) => {
 
     if (error) {
       console.log('error in createPayment method:', error);
-      setError(error.message);
+      setErrorMessage(error.message);
       setLoading(false);
       return;
     } else {
       console.log('payment method:', paymentMethod);
       const { data } = await axiosSecure.post(`/api/payments/create-payment-intent`, { amount: amountInCents });
 
-      console.log(data);
-
-      console.log("Backend Response:", data);
+      // console.log(data);
+      // console.log("Backend Response:", data);
 
       const clientSecret = data.clientSecret;
 
-      console.log("Client Secret:", clientSecret);
+      // console.log("Client Secret:", clientSecret);
 
       const result = await stripe.confirmCardPayment(clientSecret, {
         payment_method: {
-          card: elements.getElement(CardElement),
+          card: card,
           billing_details: {
             name: user?.displayName,
             email: user?.email
@@ -74,16 +74,30 @@ const CheckoutForm = ({ closeModal, bookingInfo }) => {
         console.log(result.error);
       } else {
         if (result.paymentIntent.status === "succeeded") {
+          // 1.create payment info object
+          const paymentInfo = {
+            ...bookingInfo,
+            roomId: bookingInfo._id,
+            transactionId: result.paymentIntent?.id,
+            date: new Date()
+          }
+          delete paymentInfo._id;
+          console.log(paymentInfo);
+
+          // 2. save payment info in bookings collection in db
+          const { data } = await axiosSecure.post('/api/bookings/book', paymentInfo);
+          console.log(data);
+
+          // 3. change room status to bookedin db 
+
           toast.success('Payment Successfull!');
-          setError('');
+          setErrorMessage('');
+          setLoading(false);
         }
       }
 
       setLoading(false);
     }
-
-
-
   }
   return (
     <div>
@@ -104,7 +118,7 @@ const CheckoutForm = ({ closeModal, bookingInfo }) => {
         }} />
 
         {/* error message */}
-        {error && <p className='text-red-500'>{error}</p>}
+        {errorMessage && <p className='text-red-500'>{errorMessage}</p>}
 
         {/* buttons */}
         <div className='flex mt-2 justify-around'>
@@ -114,7 +128,7 @@ const CheckoutForm = ({ closeModal, bookingInfo }) => {
             className='inline-flex justify-center rounded-md border border-transparent bg-green-200 px-4 py-2 text-sm font-medium text-green-900 hover:bg-green-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-2'
 
           >
-            {loading ? 'Processing...' : `Pay $${price}`}
+            {loading ? <ImSpinner9 className='animate-spin' width={24} /> : `Pay $${price}`}
           </button>
           <button
             onClick={closeModal}

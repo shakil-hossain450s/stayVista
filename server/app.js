@@ -9,6 +9,7 @@ const authRoutes = require('./routes/auth.routes');
 const roomsRoutes = require('./routes/rooms.routes');
 const usersRoutes = require('./routes/users.routes');
 const paymentsRoutes = require('./routes/payments.routes');
+const bookingsRoutes = require('./routes/bookings.routes');
 
 
 // middleware
@@ -38,5 +39,7 @@ app.use('/api', roomsRoutes);
 app.use('/api', usersRoutes);
 // payment routes
 app.use('/api/payments', paymentsRoutes);
+// bookings routes
+app.use('/api/bookings/book', bookingsRoutes);
 
 module.exports = app;
