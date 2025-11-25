@@ -2,11 +2,17 @@ const express = require('express');
 const router = express.Router();
 const BookingsCollection = require('../models/bookings.model');
 const RoomsCollection = require('../models/room.model');
+const verifyToken = require('../middlewares/verifyToken');
 
 // get the specific booking data using the email
-router.get('/:email', async (req, res) => {
+router.get('/:email', verifyToken, async (req, res) => {
   try {
     const email = req.params.email;
+    const decodedEmail = req.user.email;
+
+    if (email !== decodedEmail) {
+      return res.status(403).json({ message: 'Forbidden access' })
+    }
     // query
     const query = { 'guest.email': email }
 
@@ -22,26 +28,22 @@ router.get('/:email', async (req, res) => {
       message: err.message
     })
   }
-})
+});
 
-router.post('/book', async (req, res) => {
+// create a booking data in db
+router.post('/book', verifyToken, async (req, res) => {
   try {
     const paymentInfo = req.body;
-    console.log(paymentInfo);
+    // console.log(paymentInfo);
 
     const result = await BookingsCollection.create(paymentInfo);
 
     // update the status
-    const query = { _id: paymentInfo.roomId };
-    const updatedDoc = {
-      $set: { booked: true }
-    }
-    const updatedRoom = await RoomsCollection.findOneAndUpdate(query, updatedDoc);
+
 
     res.status(201).json({
       success: true,
-      createdData: result,
-      updatedRoom
+      createdData: result
     });
 
   } catch (err) {
@@ -49,6 +51,25 @@ router.post('/book', async (req, res) => {
     res.status(500).json({
       success: true,
       message: `Error save to booking data: ${err.message}`
+    })
+  }
+});
+
+// delete booking data
+router.delete('/book/:id', async (req, res) => {
+  try {
+    const _id = req.params.id;
+    const result = await BookingsCollection.findByIdAndDelete(_id);
+    res.status(200).json({
+      success: true,
+      message: 'Successfully deleted the booking info',
+      data: result
+    })
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      success: true,
+      message: err.message
     })
   }
 })

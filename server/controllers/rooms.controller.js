@@ -80,6 +80,33 @@ const createRoom = async (req, res) => {
   }
 }
 
+// update the room book status
+const updateRoomStatus = async (req, res) => {
+  try {
+    const _id = req.params.id;
+    const status = req.body.status;
+    console.log(_id, req.body);
+
+    const updatedDoc = {
+      $set: { booked: status }
+    }
+    const result = await RoomsCollection.findByIdAndUpdate(_id, updatedDoc);
+    res.status(200).json({
+      success: true,
+      message: 'status updated successfully',
+      data: result
+    });
+
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      success: false,
+      message: err.message,
+
+    })
+  }
+}
+
 // delete a room using id
 const deleteRoom = async (req, res) => {
   try {
@@ -99,4 +126,4 @@ const deleteRoom = async (req, res) => {
   }
 }
 
-module.exports = { getAllRooms, getSingleRoom, getAllRoomsForHost, createRoom, deleteRoom };
+module.exports = { getAllRooms, getSingleRoom, getAllRoomsForHost, createRoom, updateRoomStatus, deleteRoom };

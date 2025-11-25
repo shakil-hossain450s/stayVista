@@ -88,9 +88,13 @@ const CheckoutForm = ({ closeModal, bookingInfo }) => {
           console.log(paymentInfo);
 
           // 2. save payment info in bookings collection in db
-          // 3. change room status to booking db 
+
           const { data } = await axiosSecure.post('/api/bookings/book', paymentInfo);
           console.log(data);
+
+          // 3. change room status to booking db 
+          const { data: updatedRoom } = await axiosSecure.patch(`/api/room/status/${bookingInfo._id}`, { status: true });
+          console.log(updatedRoom);
 
           // 4. navigate to the my bookings page
           navigate('/dashboard/my-bookings');

@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const RoomsCollection = require('../models/room.model');
-const { getAllRooms, getSingleRoom, getAllRoomsForHost, createRoom, deleteRoom } = require('../controllers/rooms.controller');
+const { getAllRooms, getSingleRoom, getAllRoomsForHost, createRoom, deleteRoom, updateRoomStatus } = require('../controllers/rooms.controller');
 const verifyToken = require('../middlewares/verifyToken');
 const verifyHost = require('../middlewares/verifyHost');
 
@@ -16,6 +16,9 @@ router.get('/rooms/my-listings/:email', verifyToken, verifyHost, getAllRoomsForH
 
 // create a room data
 router.post('/room', verifyToken, verifyHost, createRoom);
+
+// update the room book status
+router.patch('/room/status/:id', updateRoomStatus);
 
 // delete a room data using id
 router.delete('/room/:id', verifyToken, verifyHost, deleteRoom);
