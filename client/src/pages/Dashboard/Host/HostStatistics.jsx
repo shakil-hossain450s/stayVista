@@ -39,7 +39,7 @@ const HostStatistics = () => {
               <p className='block antialiased font-sans text-sm leading-normal font-normal text-blue-gray-600'>
                 Total Sales
               </p>
-              <h4 className='block antialiased tracking-normal font-sans text-2xl font-semibold leading-snug text-blue-gray-900'>
+              <h4 className='block antialiased tracking-normal font-sans text-xl font-semibold leading-snug text-blue-gray-900'>
                 ${totalSales}
               </h4>
             </div>
@@ -56,7 +56,7 @@ const HostStatistics = () => {
               <p className='block antialiased font-sans text-sm leading-normal font-normal text-blue-gray-600'>
                 Total Bookings
               </p>
-              <h4 className='block antialiased tracking-normal font-sans text-2xl font-semibold leading-snug text-blue-gray-900'>
+              <h4 className='block antialiased tracking-normal font-sans text-xl font-semibold leading-snug text-blue-gray-900'>
                 {totalBookings}
               </h4>
             </div>
@@ -72,7 +72,7 @@ const HostStatistics = () => {
               <p className='block antialiased font-sans text-sm leading-normal font-normal text-blue-gray-600'>
                 Total Rooms
               </p>
-              <h4 className='block antialiased tracking-normal font-sans text-2xl font-semibold leading-snug text-blue-gray-900'>
+              <h4 className='block antialiased tracking-normal font-sans text-xl font-semibold leading-snug text-blue-gray-900'>
                 {totalRooms}
               </h4>
             </div>
@@ -89,7 +89,7 @@ const HostStatistics = () => {
               <p className='block antialiased font-sans text-sm leading-normal font-normal text-blue-gray-600'>
                 Host Since...
               </p>
-              <h4 className='block antialiased tracking-normal font-sans text-2xl font-semibold leading-snug text-blue-gray-900'>
+              <h4 className='block antialiased tracking-normal font-sans text-xl font-semibold leading-snug text-blue-gray-900'>
                 {hostSince && formatDistanceToNow(new Date(hostSince))} 
               </h4>
             </div>

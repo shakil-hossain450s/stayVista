@@ -38,7 +38,7 @@ const GuestStatistics = () => {
               <p className='block antialiased font-sans text-sm leading-normal font-normal text-blue-gray-600'>
                 Total Spent
               </p>
-              <h4 className='block antialiased tracking-normal font-sans text-2xl font-semibold leading-snug text-blue-gray-900'>
+              <h4 className='block antialiased tracking-normal font-sans text-xl font-semibold leading-snug text-blue-gray-900'>
                 ${totalCosts}
               </h4>
             </div>
@@ -55,7 +55,7 @@ const GuestStatistics = () => {
               <p className='block antialiased font-sans text-sm leading-normal font-normal text-blue-gray-600'>
                 Total Bookings
               </p>
-              <h4 className='block antialiased tracking-normal font-sans text-2xl font-semibold leading-snug text-blue-gray-900'>
+              <h4 className='block antialiased tracking-normal font-sans text-xl font-semibold leading-snug text-blue-gray-900'>
                 {totalBookings}
               </h4>
             </div>
@@ -72,7 +72,7 @@ const GuestStatistics = () => {
               <p className='block antialiased font-sans text-sm leading-normal font-normal text-blue-gray-600'>
                 Guest Since...
               </p>
-              <h4 className='block antialiased tracking-normal font-sans text-2xl font-semibold leading-snug text-blue-gray-900'>
+              <h4 className='block antialiased tracking-normal font-sans text-xl font-semibold leading-snug text-blue-gray-900'>
                 {guestSince && formatDistanceToNow(new Date(guestSince))}
               </h4>
             </div>

@@ -13,15 +13,15 @@ router.get('/admin-stat', verifyToken, verifyAdmin, async (req, res) => {
   try {
     const bookingsDetails = await BookingsCollection.find(
       {},
-      { createdAt: 1, price: 1 }
+      { updatedAt: 1, price: 1 }
     ).lean();
     const totalUsers = await UsersCollection.countDocuments();
     const totalRooms = await RoomsCollection.countDocuments();
     const totalSales = bookingsDetails.reduce((sum, booking) => sum + booking.price, 0);
 
     const chartData = bookingsDetails.map(booking => {
-      const day = new Date(booking.createdAt).getDate();
-      const month = new Date(booking.createdAt).getMonth() + 1;
+      const day = new Date(booking.updatedAt).getDate();
+      const month = new Date(booking.updatedAt).getMonth() + 1;
       const data = [`${day}/${month}`, booking?.price];
       return data;
     });
@@ -52,15 +52,15 @@ router.get('/host-stat', verifyToken, verifyHost, async (req, res) => {
     const email = req.user.email;
     const bookingsDetails = await BookingsCollection.find(
       { 'host.email': email },
-      { createdAt: 1, price: 1 }
+      { updatedAt: 1, price: 1 }
     ).lean();
-    const { createdAt } = await UsersCollection.findOne({ email }, { createdAt: 1 });
+    const { updatedAt } = await UsersCollection.findOne({ email }, { updatedAt: 1 });
     const totalRooms = await RoomsCollection.countDocuments({ 'host.email': email });
     const totalSales = bookingsDetails.reduce((sum, booking) => sum + booking.price, 0);
 
     const chartData = bookingsDetails.map(booking => {
-      const day = new Date(booking.createdAt).getDate();
-      const month = new Date(booking.createdAt).getMonth() + 1;
+      const day = new Date(booking.updatedAt).getDate();
+      const month = new Date(booking.updatedAt).getMonth() + 1;
       const data = [`${day}/${month}`, booking?.price];
       return data;
     });
@@ -70,7 +70,7 @@ router.get('/host-stat', verifyToken, verifyHost, async (req, res) => {
     // console.log(chartData);
 
     res.status(200).json({
-      hostSince: createdAt,
+      hostSince: updatedAt,
       totalBookings: bookingsDetails.length,
       totalRooms,
       totalSales,
@@ -92,14 +92,14 @@ router.get('/guest-stat', verifyToken, async (req, res) => {
     const email = req.user.email;
     const bookingsDetails = await BookingsCollection.find(
       { 'guest.email': email },
-      { createdAt: 1, price: 1 }
+      { updatedAt: 1, price: 1 }
     ).lean();
-    const { createdAt } = await UsersCollection.findOne({ email }, { createdAt: 1 });
+    const { updatedAt } = await UsersCollection.findOne({ email }, { updatedAt: 1 });
     const totalCosts = bookingsDetails.reduce((sum, booking) => sum + booking.price, 0);
 
     const chartData = bookingsDetails.map(booking => {
-      const day = new Date(booking.createdAt).getDate();
-      const month = new Date(booking.createdAt).getMonth() + 1;
+      const day = new Date(booking.updatedAt).getDate();
+      const month = new Date(booking.updatedAt).getMonth() + 1;
       const data = [`${day}/${month}`, booking?.price];
       return data;
     });
@@ -109,7 +109,7 @@ router.get('/guest-stat', verifyToken, async (req, res) => {
     // console.log(chartData);
 
     res.status(200).json({
-      guestSince: createdAt,
+      guestSince: updatedAt,
       totalBookings: bookingsDetails.length,
       totalCosts,
       chartData,
