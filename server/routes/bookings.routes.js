@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const BookingsCollection = require('../models/bookings.model');
-const RoomsCollection = require('../models/room.model');
+const BookingsCollection = require('../models/booking.model');
 const verifyToken = require('../middlewares/verifyToken');
 
 // get the specific booking data using the email

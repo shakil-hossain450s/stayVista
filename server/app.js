@@ -10,6 +10,7 @@ const roomsRoutes = require('./routes/rooms.routes');
 const usersRoutes = require('./routes/users.routes');
 const paymentsRoutes = require('./routes/payments.routes');
 const bookingsRoutes = require('./routes/bookings.routes');
+const statisticsRoutes = require('./routes/statistics.routes');
 
 
 // middleware
@@ -41,5 +42,7 @@ app.use('/api', usersRoutes);
 app.use('/api/payments', paymentsRoutes);
 // bookings routes
 app.use('/api/bookings', bookingsRoutes);
+// statistics routes
+app.use('/api/statistics', statisticsRoutes);
 
 module.exports = app;

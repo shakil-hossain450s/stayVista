@@ -80,8 +80,7 @@ const CheckoutForm = ({ closeModal, bookingInfo }) => {
           const paymentInfo = {
             ...bookingInfo,
             roomId: bookingInfo._id,
-            transactionId: result.paymentIntent?.id,
-            date: new Date()
+            transactionId: result.paymentIntent?.id
           }
           delete paymentInfo._id;
           delete paymentInfo.booked;
