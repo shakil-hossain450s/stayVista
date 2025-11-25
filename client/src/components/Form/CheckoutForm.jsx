@@ -2,14 +2,22 @@ import PropTypes from 'prop-types';
 import { CardElement, useElements, useStripe } from '@stripe/react-stripe-js';
 import { useState } from 'react';
 import './CheckoutForm.css';
+import useAxiosSecure from '../../hooks/useAxiosSecure';
+import useAuth from '../../hooks/useAuth';
+import { toast } from 'react-hot-toast';
 
 const CheckoutForm = ({ closeModal, bookingInfo }) => {
+  const { user } = useAuth();
   const { price } = bookingInfo;
   const stripe = useStripe();
   const elements = useElements();
+  const axiosSecure = useAxiosSecure();
 
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  const amountInCents = price * 100;
+  console.log(amountInCents);
 
   // handle submit
   const handleSubmit = async (e) => {
@@ -41,8 +49,40 @@ const CheckoutForm = ({ closeModal, bookingInfo }) => {
       return;
     } else {
       console.log('payment method:', paymentMethod);
+      const { data } = await axiosSecure.post(`/api/payments/create-payment-intent`, { amount: amountInCents });
+
+      console.log(data);
+
+      console.log("Backend Response:", data);
+
+      const clientSecret = data.clientSecret;
+
+      console.log("Client Secret:", clientSecret);
+
+      const result = await stripe.confirmCardPayment(clientSecret, {
+        payment_method: {
+          card: elements.getElement(CardElement),
+          billing_details: {
+            name: user?.displayName,
+            email: user?.email
+          }
+        },
+      });
+
+      if (result.error) {
+        toast.error(result.error.message);
+        console.log(result.error);
+      } else {
+        if (result.paymentIntent.status === "succeeded") {
+          toast.success('Payment Successfull!');
+          setError('');
+        }
+      }
+
       setLoading(false);
     }
+
+
 
   }
   return (

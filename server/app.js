@@ -8,6 +8,7 @@ const connectDB = require('./config/connectDB')
 const authRoutes = require('./routes/auth.routes');
 const roomsRoutes = require('./routes/rooms.routes');
 const usersRoutes = require('./routes/users.routes');
+const paymentsRoutes = require('./routes/payments.routes');
 
 
 // middleware
@@ -35,5 +36,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api', roomsRoutes);
 // users routes
 app.use('/api', usersRoutes);
+// payment routes
+app.use('/api/payments', paymentsRoutes);
 
 module.exports = app;
