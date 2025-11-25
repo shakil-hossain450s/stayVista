@@ -1,6 +1,8 @@
 import LoadingSpinner from "../../../components/Shared/LoadingSpinner";
 import useUserRole from "../../../hooks/useUserRole";
 import AdminStatistics from "../Admin/AdminStatistics";
+import GuestStatistics from "../Guest/GuestStatistics";
+import HostStatistics from "../Host/HostStatistics";
 
 const Statistics = () => {
   const { role, loading } = useUserRole();
@@ -10,6 +12,8 @@ const Statistics = () => {
   return (
     <div>
       {role === 'admin' && <AdminStatistics />}
+      {role === 'host' && <HostStatistics />}
+      {role === 'guest' && <GuestStatistics />}
     </div>
   );
 };

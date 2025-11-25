@@ -1,5 +1,8 @@
 import { Chart } from 'react-google-charts';
 import PropTypes from 'prop-types';
+import { useState } from 'react';
+import { useEffect } from 'react';
+import LoadingSpinner from '../Shared/LoadingSpinner';
 
 // const data = [
 //   ['Day', 'Sales'],
@@ -15,9 +18,26 @@ const options = {
   legend: { position: 'bottom' },
   series: [{ color: '#F43F5E' }],
 }
-const SalesLineChart = ({ chartData }) => {
+const SalesLineChart = ({ chartData = [] }) => {
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    setTimeout(() => setLoading(false), 2000);
+  }, []);
+
   return (
-    <Chart chartType='LineChart' width='100%' data={chartData} options={options} />
+    <>
+      {
+        loading ? (
+          <LoadingSpinner smallHeight />
+        ) : (
+          chartData.length > 1 ? (
+            <Chart chartType='LineChart' width='100%' data={chartData} options={options} />
+          ) : (
+            <p className='flex items-center justify-center pt-36'>Not Enough Data</p>
+          )
+        )
+      }
+    </>
   )
 }
 
