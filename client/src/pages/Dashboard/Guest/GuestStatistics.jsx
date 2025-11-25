@@ -2,8 +2,26 @@ import { Calendar } from 'react-date-range'
 import { FaDollarSign } from 'react-icons/fa'
 import { BsFillCartPlusFill } from 'react-icons/bs'
 import { GiPlayerTime } from 'react-icons/gi'
+import useAxiosSecure from '../../../hooks/useAxiosSecure'
+import { useQuery } from '@tanstack/react-query'
+import LoadingSpinner from '../../../components/Shared/LoadingSpinner'
+import { formatDistanceToNow } from "date-fns"
+import SalesLineChart from '../../../components/Dashboard/SalesLineChart'
 
 const GuestStatistics = () => {
+  const axiosSecure = useAxiosSecure();
+  const { data: stateData = [], isPending, isError } = useQuery({
+    queryKey: ['admin-statistics'],
+    queryFn: async () => {
+      const { data } = await axiosSecure('/api/statistics/guest-stat');
+      return data;
+    }
+  });
+
+  const { guestSince, totalBookings, totalCosts, chartData } = stateData;
+
+  if (isPending) return <LoadingSpinner />
+  if (isError) return <p className='text-red-500'>Something went wrong...</p>
   return (
     <div>
       <div className='mt-12'>
@@ -21,7 +39,7 @@ const GuestStatistics = () => {
                 Total Spent
               </p>
               <h4 className='block antialiased tracking-normal font-sans text-2xl font-semibold leading-snug text-blue-gray-900'>
-                $343
+                ${totalCosts}
               </h4>
             </div>
           </div>
@@ -38,7 +56,7 @@ const GuestStatistics = () => {
                 Total Bookings
               </p>
               <h4 className='block antialiased tracking-normal font-sans text-2xl font-semibold leading-snug text-blue-gray-900'>
-                34
+                {totalBookings}
               </h4>
             </div>
           </div>
@@ -55,7 +73,7 @@ const GuestStatistics = () => {
                 Guest Since...
               </p>
               <h4 className='block antialiased tracking-normal font-sans text-2xl font-semibold leading-snug text-blue-gray-900'>
-                3 Days
+                {guestSince && formatDistanceToNow(new Date(guestSince))}
               </h4>
             </div>
           </div>
@@ -65,6 +83,7 @@ const GuestStatistics = () => {
           {/* Total Sales Graph */}
           <div className='relative flex flex-col bg-clip-border rounded-xl bg-white text-gray-700 shadow-md overflow-hidden xl:col-span-2'>
             {/* Render Chart Here */}
+            <SalesLineChart chartData={chartData} />
           </div>
           {/* Calender */}
           <div className='relative flex flex-col bg-clip-border rounded-xl bg-white text-gray-700 shadow-md overflow-hidden'>

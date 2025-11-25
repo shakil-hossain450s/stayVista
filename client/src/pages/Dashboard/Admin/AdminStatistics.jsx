@@ -17,7 +17,7 @@ const AdminStatistics = () => {
     }
   });
 
-  const { totalUsers, totalRooms, totalBookings, totalPrice, chartData } = stateData;
+  const { totalUsers, totalRooms, totalBookings, totalSales, chartData } = stateData;
 
   if (isPending) return <LoadingSpinner />
   if (isError) return <p className='text-red-500'>Something went wrong...</p>
@@ -39,7 +39,7 @@ const AdminStatistics = () => {
                 Total Sales
               </p>
               <h4 className='block antialiased tracking-normal font-sans text-2xl font-semibold leading-snug text-blue-gray-900'>
-                ${totalPrice}
+                ${totalSales}
               </h4>
             </div>
           </div>
