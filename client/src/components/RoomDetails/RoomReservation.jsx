@@ -7,7 +7,7 @@ import BookingModal from '../Modal/BookingModal';
 import useAuth from '../../hooks/useAuth';
 
 const RoomReservation = ({ room }) => {
-  const {user} = useAuth();
+  const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [state, setState] = useState([
     {
@@ -57,7 +57,11 @@ const RoomReservation = ({ room }) => {
       </div>
       <hr />
       <div className='p-4'>
-        <Button onClick={() => setIsOpen(true)} label={'Reserve'} />
+        <Button
+          onClick={() => setIsOpen(true)}
+          disabled={room.booked}
+          label={`${room.booked ? 'Already Booked' : 'Reserve'}`}
+        />
       </div>
 
       {/* booking modal */}

@@ -5,24 +5,24 @@ const RoomsCollection = require('../models/room.model');
 
 router.post('/', async (req, res) => {
   try {
-    const bookingData = req.body;
-    console.log(bookingData);
+    const paymentInfo = req.body;
+    console.log(paymentInfo);
 
-    const result = await BookingsCollection.create(bookingData);
+    const result = await BookingsCollection.create(paymentInfo);
 
     // update the status
-    const query = { _id: bookingData.roomId };
+    const query = { _id: paymentInfo.roomId };
     const updatedDoc = {
       $set: { booked: true }
     }
-    const updatedRoom = await RoomsCollection.updateOne(query, updatedDoc);
+    const updatedRoom = await RoomsCollection.findOneAndUpdate(query, updatedDoc);
 
     res.status(201).json({
       success: true,
       createdData: result,
       updatedRoom
     });
-    
+
   } catch (err) {
     console.log(err);
     res.status(500).json({

@@ -38,6 +38,10 @@ const RoomSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    booked: {
+      type: Boolean,
+      default: false,
+    },
     host: {
       name: {
         type: String,

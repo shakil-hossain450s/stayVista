@@ -82,6 +82,7 @@ const CheckoutForm = ({ closeModal, bookingInfo }) => {
             date: new Date()
           }
           delete paymentInfo._id;
+          delete paymentInfo.booked;
           console.log(paymentInfo);
 
           // 2. save payment info in bookings collection in db
