@@ -1,7 +1,15 @@
+import LoadingSpinner from "../../../components/Shared/LoadingSpinner";
+import useUserRole from "../../../hooks/useUserRole";
+import AdminStatistics from "../Admin/AdminStatistics";
+
 const Statistics = () => {
+  const { role, loading } = useUserRole();
+  if (loading) return <LoadingSpinner />
+  console.log(role);
+
   return (
     <div>
-      <h2>Welcome to Dashboard: Statistics Page</h2>
+      {role === 'admin' && <AdminStatistics />}
     </div>
   );
 };

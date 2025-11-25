@@ -13,10 +13,13 @@ const BookingDataRow = ({ booking }) => {
   const queryClient = useQueryClient();
 
   // use mutation to delete to the booking data
-  const { mutateAsync: cancelBooking } = useMutation({
-    mutationFn: async (id) => {
-      const { data } = await axiosSecure.delete(`api/bookings/book/${id}`);
-      return data;
+  const { mutateAsync: cancelAndUpdate } = useMutation({
+    mutationFn: async ({ bookingId, roomId }) => {
+      // 1. cancel booking
+      await axiosSecure.delete(`api/bookings/book/${bookingId}`);
+      // 2. update room status
+      await axiosSecure.patch(`/api/room/status/${roomId}`, { status: false });
+      return true;
     },
     onSuccess: () => {
       toast.success('Booking cancel successfully!');
@@ -26,30 +29,17 @@ const BookingDataRow = ({ booking }) => {
     },
     onSettled: () => {
       queryClient.invalidateQueries(['my-bookings']);
-    }
-  });
-
-  const {mutateAsync: updateRoomStatus} = useMutation({
-    mutationFn: async (roomId) => {
-      const { data } = await axiosSecure.patch(`/api/room/status/${roomId}`, { status: false });
-      return data;
-    },
-    onSuccess: (data) => {
-      console.log(data);
-    },
-    onError: (err) => {
-      console.log(err);
-    },
-    onSettled: () => {
       queryClient.invalidateQueries(['rooms']);
     }
-  })
+  });
 
   const handleDelete = async (id) => {
     console.log('handle delete', id);
     try {
-      await cancelBooking(id);
-      await updateRoomStatus(booking?.roomId);
+      await cancelAndUpdate({
+        bookingId: id,
+        roomId: booking?.roomId
+      });
     } catch (err) {
       console.log(err);
     }
