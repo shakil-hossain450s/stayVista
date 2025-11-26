@@ -44,6 +44,7 @@ const RoomReservation = ({ room }) => {
           rangeColors={['#F43F5E']}
           showDateDisplay={false}
           editableDateInputs={true}
+          minDate={new Date()}
           onChange={() => setState([
             {
               startDate: new Date(room.from),
