@@ -47,7 +47,7 @@ const RoomDataRow = ({ room, handleDelete }) => {
 
   const { mutateAsync: updateRoom } = useMutation({
     mutationFn: async (updatedRoomData) => {
-      const { data } = await axiosSecure.put(`/api/rooms/room/${room?._id}`, updatedRoomData);
+      const { data } = await axiosSecure.put(`/api/rooms/update-room/${room?._id}`, updatedRoomData);
       return data;
     },
     onError: (err) => {

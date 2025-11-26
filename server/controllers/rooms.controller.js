@@ -85,7 +85,7 @@ const updateRoomStatus = async (req, res) => {
   try {
     const _id = req.params.id;
     const status = req.body.status;
-    console.log(_id, req.body);
+    console.log(_id, status);
 
     const updatedDoc = {
       $set: { booked: status }

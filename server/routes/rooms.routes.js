@@ -18,7 +18,7 @@ router.get('/rooms/my-listings/:email', verifyToken, verifyHost, getAllRoomsForH
 router.post('/room', verifyToken, verifyHost, createRoom);
 
 // update the room data
-router.put('/rooms/room/:id', async (req, res) => {
+router.put('/rooms/update-room/:id', async (req, res) => {
   try {
     const _id = req.params.id;
 
@@ -27,7 +27,7 @@ router.put('/rooms/room/:id', async (req, res) => {
     const result = await RoomsCollection.findByIdAndUpdate(_id, updatedRoomData);
     res.status(200).json({
       success: true,
-      message: 'Successfully updated the room data',
+      message: `Successfully updated the ${result.title}`,
       data: result
     })
 

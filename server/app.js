@@ -1,9 +1,9 @@
-require('dotenv').config()
-const express = require('express')
-const app = express()
-const cors = require('cors')
-const cookieParser = require('cookie-parser')
-const connectDB = require('./config/connectDB')
+require('dotenv').config();
+const express = require('express');
+const app = express();
+const cors = require('cors');
+const cookieParser = require('cookie-parser');
+const connectDB = require('./config/connectDB');
 
 const authRoutes = require('./routes/auth.routes');
 const roomsRoutes = require('./routes/rooms.routes');
@@ -20,12 +20,13 @@ const corsOptions = {
   optionSuccessStatus: 200,
 }
 
-app.use(cors(corsOptions))
-app.use(express.json())
-app.use(cookieParser())
+app.use(cors(corsOptions));
+app.use(express.json());
+app.use(cookieParser());
 
 // database connection
 connectDB();
+
 
 // default entry point route
 app.get('/', (req, res) => {

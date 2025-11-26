@@ -1,4 +1,5 @@
 const UsersCollection = require('../models/user.model');
+const sendEmail = require('../services/email.service');
 
 // get all user
 const getAllUsers = async (req, res) => {
@@ -102,6 +103,11 @@ const createUser = async (req, res) => {
 
     const result = await UsersCollection.create(user);
 
+    sendEmail(user?.email, {
+      subject: 'Welcome',
+      message: `Hope you will find your destinations.` 
+    });
+
     res.status(201).json({
       success: true,
       data: result
@@ -184,10 +190,10 @@ const updateUserRole = async (req, res) => {
 
     const query = { email };
     const updatedDoc = {
-      $set: { 
+      $set: {
         role: roleData,
         status
-       }
+      }
     }
 
     await UsersCollection.findOneAndUpdate(query, updatedDoc);

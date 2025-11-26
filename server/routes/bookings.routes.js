@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const BookingsCollection = require('../models/booking.model');
 const verifyToken = require('../middlewares/verifyToken');
+const sendEmail = require('../services/email.service');
 
 // get the specific booking data using the email
 router.get('/:email', verifyToken, async (req, res) => {
@@ -32,12 +33,22 @@ router.get('/:email', verifyToken, async (req, res) => {
 // create a booking data in db
 router.post('/book', verifyToken, async (req, res) => {
   try {
-    const paymentInfo = req.body;
-    // console.log(paymentInfo);
+    const bookingData = req.body;
+    // console.log(bookingData);
 
-    const result = await BookingsCollection.create(paymentInfo);
+    const result = await BookingsCollection.create(bookingData);
 
-    // update the status
+    // send email for guest
+    sendEmail(bookingData?.guest?.email, {
+      subject: 'Booking Successfully!',
+      message: `You've successfully booked a room through StayVista. Transaction ID: ${bookingData?.transactionId}`
+    });
+    
+    // send email for host
+    sendEmail(bookingData?.host?.email, {
+      subject: 'Booked Successfully!',
+      message: `Get ready to welcome ${bookingData?.guest?.name}`
+    });
 
 
     res.status(201).json({
